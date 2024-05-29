@@ -17,6 +17,36 @@ else, the sequencer uses a simpler grammar and syntax that is easy to parse on
 a microcontroller.
 
 
+## How to Run the Code
+
+I've been testing this with CircuitPython 9.0.5 on a Trinket M0 (SAMD21), but
+it also runs on desktop python3.
+
+
+### CircuitPython Version
+
+1. Update CircuitPython and bootloader the normal way. (no additional libraries
+   are needed)
+
+2. Copy [txtseq](txtseq) module to CIRCUITPY drive (okay to omit `__main__.py`)
+
+3. Copy [code.py](code.py), [boot.py](boot.py), and [track1.txt](track1.txt) to
+   CIRCUITPY drive
+
+The parser output should show on the serial console. The numbers on the last
+line indicate free memory at different points during loading and parsing of
+the song from track1.txt (see code in `code.py`).
+
+
+### Desktop Version
+
+1. Clone this repo
+
+2. `cd txtseq`
+
+3. `python3 -m txtseq track1.txt`
+
+
 ## On Timing and Polyphony
 
 To support chords, dynamics, and some automation of other control parameters on
