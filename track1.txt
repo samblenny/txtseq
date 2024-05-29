@@ -1,0 +1,16 @@
+# Comments start with a "#"
+
+U 1/8   # time unit is 1/8, so <note>2 is 1/4 note, <note>4 is 1/2 note, etc
+B 140   # tempo is 140 bpm
+
+# Lines starting with 1, 2, 3, or 4 are staff lines which add notes to
+# the track for their respective voices. Voices correspond to midi channels.
+
+ 1 | C2 D2 E2 F2 | G2 A2 B2 c2 |   # C is middle-c, "c" is 1 octave above C
+2  | C,16                      |   # 16 * 1/8 = 2 tied whole notes
+
+1 | B2 A2 G2 F2 | E2 D2 C4    |    # D2 is quarter note, C4 is half note
+2 | C,8         | c'8         |    # , means 1 octave down and ' means 1 up
+
+1 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |  # Chord syntax: {<notes>}<duration>
+2 | _C,8          | ^A,8        |  # accidentals: ^ is sharp, _ is flat
