@@ -75,12 +75,7 @@ the song from track1.txt (see code in `code.py`).
    can available to buffer the MIDI note data created by the sequencer.
 
 4. Parsing of note pitch and duration for staff lines happens in the
-   `parse_staff(voice, f, line, notes)` function of
-   [`txtseq/staff.py`](txtseq/staff.py). The `voice` argument corresponds to
-   one of the 4 sequencer voices. `f` is the file object reference. `line` is
-   the input file line counter from `sequencer()`, which is used for formatting
-   syntax error messages. `notes` holds an array to which the parsed midi notes
-   and durations get appended.
+   `parse_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
 
 5. The [`txtseq/util.py`](txtseq/util.py) file holds smaller parsing
    functions for dealing with comments (`# ...`), semantically irrelevant
