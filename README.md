@@ -77,6 +77,17 @@ the song from track1.txt (see code in `code.py`).
 6. The [`txtseq/data.py`](txtseq/data.py) file holds dictionaries for using
    hash lookups to simplify various parsing steps.
 
+7. The [`txtseq/notebuf.py`](txtseq/notebuf.py) file has code to manage the
+   buffer of timed MIDI note events that accumulate as staff lines get parsed.
+
+   Currently, I'm packing note on and off events as uint32 values in an
+   `array.array('L')`. The most significant 16 bits have a timestamp (units of
+   MIDI pulses per quarter note). The low 16 bits have MIDI status and data
+   bytes. This allows for adding note events one voice at a time without
+   worrying about out-of-order events. My plan is to do an in-place sort at the
+   end to merge all the events from different voices into one list ordered by
+   ascending timestamps (similar to an SMF format 0 file).
+
 
 ## Music Notation Grammar and Syntax
 
