@@ -17,11 +17,17 @@ def usage():
     print("Usage:\n   python3 -m txtseq <text-file>")
 
 def main():
-    if len(sys.argv) > 1 and os.path.isfile(sys.argv[1]):
-        with open(sys.argv[1], 'rb') as f:
-            seq = sequencer(f)
-    else:
+    if (len(sys.argv) != 2) or (not os.path.isfile(sys.argv[1])):
         usage()
+        exit(1)
+    with open(sys.argv[1], 'rb') as f:
+        seq = sequencer(f)
+        print()
+        for (i, s) in enumerate(seq):
+            print(f"{s:08X}", end=' ')
+            if i & 7 == 7:
+                print()
+        print()
 
 
 if PROFILE:

@@ -11,6 +11,13 @@ with open('track1.txt', 'rb') as f:
     b = mem_free()
     seq = sequencer(f)
     collect()
+    print()
+    for (i, s) in enumerate(seq):
+        print(f"{s:08X}", end=' ')
+        if i & 7 == 7:
+            print()
+    print("\n")
+    collect()
     c = mem_free()
     print(a, b, c, a-b, b-c)
 

@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from gc import collect
 from .data import crlf, whitespace, beat_len_d
 
 
@@ -24,8 +23,10 @@ def skip_whitespace(f):
         rewind = f.tell()
 
 # Parse a time unit header line like, "U 1/8" or "U 1/16".
+# Result: updates value of db['ppb'].
 # CAUTION: this can raise ValueError for syntax errors.
-def parse_time_unit(f, line):
+def parse_ppb(f, db):
+    line = db['line']
     print(f"{line:2}: U", end=' ')
     chars = []
     skip_whitespace(f)
@@ -41,15 +42,17 @@ def parse_time_unit(f, line):
             chars.append(b)
         rewind = f.tell()
     word = b''.join(chars).rstrip()
-    beat_len = beat_len_d.get(word, None)
-    if beat_len is None:
-        raise ValueError(f"beat length: line {line}")
-    print(str(word, 'ascii'), "->", beat_len)
-    return beat_len
+    ppb = beat_len_d.get(word, None)  # look up pulses per beat
+    if ppb is None:
+        raise ValueError(f"U: line {line}")
+    print(f'ppb={ppb}')
+    db['ppb'] = ppb
 
 # Parse a bpm header line like, "B 80" or "B 140".
+# Result: updates value of db['bpm'].
 # CAUTION: this can raise ValueError for syntax errors.
-def parse_bpm(f, line):
+def parse_bpm(f, db):
+    line = db['line']
     print(f"{line:2}: B", end=' ')
     skip_whitespace(f)
     digits = []
@@ -65,6 +68,7 @@ def parse_bpm(f, line):
             digits.append(b)
         rewind = f.tell()
     if not digits:
-        raise ValueError(f"bpm: line {line}")
+        raise ValueError(f"B: line {line}")
     bpm = int(b''.join(digits).rstrip())
     print(bpm)
+    db['bpm'] = bpm
