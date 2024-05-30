@@ -47,6 +47,88 @@ the song from track1.txt (see code in `code.py`).
 3. `python3 -m txtseq track1.txt`
 
 
+## Reading the Code
+
+1. The [txtseq](txtseq) module exports a function,
+   [`sequencer(f)`](txtseq/sequencer.py) which expects its argument, `f`, to be
+   a binary mode file object (e.g. `open('some-song.txt', 'rb')`). For usage
+   examples, see [`code.py`](code.py) or
+   [`txtseq/__main__.py`](txtseq/__main__.py).
+
+2. The `seqencer()` function parses its input file to find top level commands,
+   which it then uses to call further parsing functions. For example, the
+   commands `1`, `2`, `3`, and `4` call the [`parse_staff()`](txtseq/staff.py)
+   function. The numbers correspond to each of the four voices (tracks).
+
+3. To get all the parser code to compile and run on a SAMD21, the module is
+   split into several files of mostly less than 100 lines. The parsing style is
+   based on state machine loops that examine one byte at a time. When one of
+   the parser functions or state if-branches recognizes a byte that should be
+   processed by a different function or state branch, it will rewind the file's
+   cursor position by one byte using the `f.seek(rewind)` idiom.
+
+   I re-built the parser in this style to reduce memory use and fragmentation
+   after I repeatedly ran out of memory with my initial attempts that relied
+   more on python string methods. For the same reason, I call `gc.collect()`
+   *a lot*, which slows down the parsing time substantially. But, it is very
+   effective at avoiding memory errors. The goal is to leave as much RAM as I
+   can available to buffer the MIDI note data created by the sequencer.
+
+4. Parsing of note pitch and duration for staff lines happens in the
+   `parse_staff(voice, f, line, notes)` function of
+   [`txtseq/staff.py`](txtseq/staff.py). The `voice` argument corresponds to
+   one of the 4 sequencer voices. `f` is the file object reference. `line` is
+   the input file line counter from `sequencer()`, which is used for formatting
+   syntax error messages. `notes` holds an array to which the parsed midi notes
+   and durations get appended.
+
+5. The [`txtseq/utils.py`](txtseq/utils.py) file holds smaller parsing
+   functions for dealing with comments (`# ...`), semantically irrelevant
+   whitespace, and setting of header options (`B` for bpm, `U` for time unit)
+
+6. The [`txtseq/data.py`](txtseq/data.py) file holds dictionaries for using
+   hash lookups to simplify various parsing steps.
+
+
+## Music Notation Grammar and Syntax
+
+For examples of how the plaintext music notation works, check out the comments
+in [`track1.txt`](track1.txt).
+
+The ASCII note transcription style used here is loosely based on the abc music
+standard, but the two notations are not compatible. In particular, this
+notation uses `{}` for chords, requires chord durations to be specified after
+the closing `}`, and omits a lot of abc's features such as configurable key
+signature.
+
+The short summary:
+
+- Single note: `<accidental><pitch><octave><duration>` (e.g. `C` `_B,` `c2`)
+
+- Chord note: `<accidental><pitch><octave>`
+
+- Chord: `{<chord note><chord note>...}<duration>` (e.g. `{C^DA}4` `{ceg}`)
+
+- Accidental: `_` (flat), `^` (sharp), or the empty string (natural)
+
+- Note: `C D E F G A B c d e f g a b` (`C` is middle-c, `c` is 1 octave up)
+
+- Octave: `,` (lower by 1 octave), `'` (raise by one octave), repeated commas
+  or single-quotes are cumulative (`,,` lowers 2 octaves, `'''` raises by 3).
+  Examples: `C,,,`  `d'`
+
+- Staff: staff lines start with a voice number then have an arbitrary sequence
+  of whitespace, bar lines (`|`), notes, and chords. Bar lines and whitespace
+  are ignored by the parser, but you can use them to help organize your notes
+  for better readability. It's fine to make long notes that last for more than
+  one measure (e.g. `C,16` with time unit set to `1/8` would be played the same
+  as 2 tied whole notes in 4/4 time)
+
+  Example: `1 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
+
+  For more examples, see [`track1.txt`](track1.txt)
+
+
 ## On Timing and Polyphony
 
 To support chords, dynamics, and some automation of other control parameters on
