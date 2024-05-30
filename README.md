@@ -67,13 +67,6 @@ the song from track1.txt (see code in `code.py`).
    processed by a different function or state branch, it will rewind the file's
    cursor position by one byte using the `f.seek(rewind)` idiom.
 
-   I re-built the parser in this style to reduce memory use and fragmentation
-   after I repeatedly ran out of memory with my initial attempts that relied
-   more on python string methods. For the same reason, I call `gc.collect()`
-   *a lot*, which slows down the parsing time substantially. But, it is very
-   effective at avoiding memory errors. The goal is to leave as much RAM as I
-   can available to buffer the MIDI note data created by the sequencer.
-
 4. Parsing of note pitch and duration for staff lines happens in the
    `parse_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
 
