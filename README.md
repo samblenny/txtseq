@@ -82,7 +82,7 @@ the song from track1.txt (see code in `code.py`).
    syntax error messages. `notes` holds an array to which the parsed midi notes
    and durations get appended.
 
-5. The [`txtseq/utils.py`](txtseq/utils.py) file holds smaller parsing
+5. The [`txtseq/util.py`](txtseq/util.py) file holds smaller parsing
    functions for dealing with comments (`# ...`), semantically irrelevant
    whitespace, and setting of header options (`B` for bpm, `U` for time unit)
 
