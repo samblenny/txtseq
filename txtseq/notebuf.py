@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from gc import collect
 
 
 # Encode note and append it to the array of uint32 ('L' typecode)
@@ -21,7 +20,6 @@ def add_note(ticks, channel, note, pulses, buf):
     if not (0 <= note <= 127):
         raise Exception('note OOR')
     print(f"{ticks}/{note}/{pulses}", end=' ')
-    collect()  # gc before possible array backing buffer resize
     note_on  = ((0x90 | channel) << 8) | note  # yes, really omit velocity
     note_off = ((0x80 | channel) << 8) | note
     on_ticks = (ticks << 16)
