@@ -8,7 +8,7 @@ from .util import skip_comment
 
 # Parse a staff line of plaintext music sequencing notation.
 # Arguments: 'line', 'ticks', 'ppb', and 'buf' from db
-# Results: update'buf' and 'ticks' from db
+# Results: update db['buf'] and db['ticks'][voice]
 # CAUTION: This can raise ValueError for syntax errors.
 # CAUTION: This includes a hardcoded voice to midi channel mapping!
 def parse_staff(voice, f, db):
@@ -77,17 +77,13 @@ def parse_staff(voice, f, db):
                     digits = None
                 pulses = ppb * duration
                 if chord:            # record chord notes
-                    for mn in chord_notes:
-                        print(f"{ticks}/{mn}/{duration}", end=' ')
-                    for mn in chord_notes:
-                        add_note(ticks, channel, mn, pulses, db['buf'])
+                    for note in chord_notes:
+                        add_note(ticks, channel, note, pulses, db['buf'])
                     chord_notes = None
                     chord = False
-                    ticks += pulses
                 else:                # record single note
-                    print(f"{ticks}/{note}/{duration}", end=' ')
                     add_note(ticks, channel, note, pulses, db['buf'])
-                    ticks += pulses
+                ticks += pulses
                 state = 0            # reset for next note or chord
                 f.seek(rewind)
         rewind = f.tell()

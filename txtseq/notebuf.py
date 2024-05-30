@@ -20,6 +20,7 @@ def add_note(ticks, channel, note, pulses, buf):
         raise Exception('channel OOR')
     if not (0 <= note <= 127):
         raise Exception('note OOR')
+    print(f"{ticks}/{note}/{pulses}", end=' ')
     collect()  # gc before possible array backing buffer resize
     note_on  = ((0x90 | channel) << 8) | note  # yes, really omit velocity
     note_off = ((0x80 | channel) << 8) | note
