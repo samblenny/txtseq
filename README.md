@@ -221,6 +221,5 @@ My plan for a system to get good timing resolution using limited resources...
    highest priority. For example, to get the tightest drum timing, you can put
    percussion on voice 1.
 
-4. Store MIDI events as list of list, list of tuple, or list of namedtuple,
-   because those all take much less CircuitPython RAM compared to a list of
-   class instances.
+4. Store MIDI events packed as integers in an `array.array('L')` to save memory
+   compared to regular lists of objects.
