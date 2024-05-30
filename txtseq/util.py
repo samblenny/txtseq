@@ -22,12 +22,8 @@ def skip_whitespace(f):
             break
         rewind = f.tell()
 
-# Parse a time unit header line like, "U 1/8" or "U 1/16".
-# Result: updates value of db['ppb'].
-# CAUTION: this can raise ValueError for syntax errors.
-def parse_ppb(f, db):
-    line = db['line']
-    print(f"{line:2}: U", end=' ')
+# Return rest of line but strip the whitespace
+def get_rest_of_line(f):
     chars = []
     skip_whitespace(f)
     rewind = f.tell()
@@ -41,9 +37,16 @@ def parse_ppb(f, db):
         else:
             chars.append(b)
         rewind = f.tell()
-    word = b''.join(chars).rstrip()
-    ppb = beat_len_d.get(word, None)  # look up pulses per beat
-    if ppb is None:
+    return b''.join(chars).rstrip()
+
+# Parse a time unit header line like, "U 1/8" or "U 1/16".
+# Result: updates value of db['ppb'].
+# CAUTION: this can raise ValueError for syntax errors.
+def parse_ppb(f, db):
+    line = db['line']
+    print(f"{line:2}: U", end=' ')
+    ppb = beat_len_d.get(get_rest_of_line(f), None)  # look up pulses per beat
+    if not ppb:
         raise ValueError(f"U: line {line}")
     print(f'ppb={ppb}')
     db['ppb'] = ppb
@@ -54,21 +57,6 @@ def parse_ppb(f, db):
 def parse_bpm(f, db):
     line = db['line']
     print(f"{line:2}: B", end=' ')
-    skip_whitespace(f)
-    digits = []
-    rewind = f.tell()
-    while b := f.read(1):
-        if b in crlf:
-            f.seek(rewind)
-            break
-        elif b == b'#':
-            skip_comment(f)
-            break
-        else:
-            digits.append(b)
-        rewind = f.tell()
-    if not digits:
-        raise ValueError(f"B: line {line}")
-    bpm = int(b''.join(digits).rstrip())
+    bpm = int(get_rest_of_line(f))
     print(bpm)
     db['bpm'] = bpm
