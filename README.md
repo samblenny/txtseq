@@ -117,6 +117,11 @@ The short summary:
   or single-quotes are cumulative (`,,` lowers 2 octaves, `'''` raises by 3).
   Examples: `C,,,`  `d'`
 
+- Duration: An integer representing the length of a note or chord as a multiple
+  of the current time unit. Duration is optional with a default value of 1.
+  With the time unit set for `1/8`, `C2` would mean a quarter note of middle-c,
+  and `C` would be an eighth note.
+
 - Staff: staff lines start with a voice number then have an arbitrary sequence
   of whitespace, bar lines (`|`), notes, and chords. Bar lines and whitespace
   are ignored by the parser, but you can use them to help organize your notes
