@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from .notebuf import add_note
 from .util import comment
 
 
@@ -15,6 +14,7 @@ def p_staff(voice, f, line, db):
     ticks = db['ticks'][voice]
     buf = db['buf']
     ppb = db['ppb']
+    p = print
     ri = f.readinto
     tell = f.tell
     seek = f.seek
@@ -23,7 +23,33 @@ def p_staff(voice, f, line, db):
     pitch_int = b'\x00\x02\x04\x05\x07\x09\x0b\x0c\x0e\x10\x11\x13\x15\x17'
     pfind = pitches.find
 
-    print(f"{line:2}: {voice+1} ", end='')
+    # Encode note and append it to the array of uint32 ('L' typecode)
+    #  arguments:
+    #    ticks: note on timestamp in pulses per quarter note
+    #    ch: MIDI channel in range 0..15
+    #    note: midi note in range 0..127
+    #    pulses: note duration in pulses per quarter note
+    #    ppb: pulses per beat for calculating gate % time
+    #    buf: an array of uint32 created with array.array('L')
+    # CAUTION: This includes a hardcoded gate time percentage!
+    def add_note(ticks, ch, note, pulses, ppb, buf):
+        if not ((0 <= ticks + pulses <= 0xFFFF)
+            and (0 <= ch <= 15)
+            and (0 <= note <= 127) ):
+            raise ValueError('note OOR')  # out of range
+        print('%d/%d/%d ' % (ticks, note, pulses), end='')
+        # store note on/off events packed as uint32 (omit velocity)
+        # 75% gate time ajustment formula...
+        # - for notes shorter than 1 beat, subtract 25% of note's pulses
+        # - for notes longer than 1 beat, subtract 25% of one beat
+        ba = buf.append
+        ba((ticks << 16) | ((0x90 | ch) << 8) | note)  # note on
+        ba(((ticks + max(1,                            # note off
+            pulses - (min(pulses, ppb) // 4)           # gate time adjustment
+            )) << 16)
+            | ((0x80 | ch) << 8) | note)
+
+    p('%2d: %d ' % (line, voice+1), end='')
     ch = voice + 10
     s = 0       # state
     chord = None
@@ -100,5 +126,5 @@ def p_staff(voice, f, line, db):
     # End of state machine loop
     if chord:
         raise ValueError(f"unclosed chord, line {line}")
-    print()
+    p()
     db['ticks'][voice] = ticks

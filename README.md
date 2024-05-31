@@ -60,7 +60,7 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 13: 2 192/48/96 288/84/96
 15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
 16: 2 384/47/96 480/58/96
-[parse time: 218 ms]
+[parse time: 210 ms]
 
 00009A3C 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41 005D8A41
 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48 00BD8A48
@@ -70,9 +70,9 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01809A43 01AD8A43 01B09A45 01DD8A45 01B09A3C 01DD8A3C 01B09A3E 01DD8A3E
 01E09A3C 01F58A3C 01F89A3C 020D8A3C 02109A3E 02258A3E 02289A43 023D8A43
 01809B2F 01DD8B2F 01E09B3A 023D8B3A
-[midi event dump time: 42 ms]
+[midi event dump time: 46 ms]
 
-mem_free: 11888 11792 11520   diffs: 96 272
+mem_free: 12080 11984 11680   diffs: 96 304
 ```
 
 1. The top section has debug print output from the parsing functions.
@@ -103,15 +103,12 @@ mem_free: 11888 11792 11520   diffs: 96 272
    processed by a different function or state branch, it will mark the file's
    cursor position by one byte using the `f.seek(mark)` idiom.
 
-4. Parsing of note pitch and duration for staff lines happens in the
+4. The [`txtseq/util.py`](txtseq/util.py) file holds parsing functions for
+   dealing with comments (`# ...`), semantically irrelevant whitespace, and
+   setting of header options (`B` for bpm, `U` for time unit)
+
+5. Parsing of note pitch and duration for staff lines happens in the
    `p_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
-
-5. The [`txtseq/util.py`](txtseq/util.py) file holds smaller parsing
-   functions for dealing with comments (`# ...`), semantically irrelevant
-   whitespace, and setting of header options (`B` for bpm, `U` for time unit)
-
-6. The [`txtseq/notebuf.py`](txtseq/notebuf.py) file has code to manage the
-   buffer of timed MIDI note events that accumulate as staff lines get parsed.
 
    Currently, I'm packing note on and off events as uint32 values in an
    `array.array('L')`. The most significant 16 bits have a timestamp (units of
