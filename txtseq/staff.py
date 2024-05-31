@@ -18,12 +18,12 @@ def p_staff(voice, f, line, db):
     ri = f.readinto
     tell = f.tell
     seek = f.seek
+    # prepare a memory efficient note-letter to integer lookup system
     pitches = b'CDEFGABcdefgab'
-    #               0,  2,  4,  5,  7,  9,  11, 12, 14, 16, 17, 19, 21, 23
-    pitch_int = b'\x00\x02\x04\x05\x07\x09\x0b\x0c\x0e\x10\x11\x13\x15\x17'
+    pitch_int = (0,2,4,5,7,9,11,12,14,16,17,19,21,23)
     pfind = pitches.find
 
-    p('%2d: %d ' % (line, voice+1), end='')
+    p('%2d: %d ' % (line, voice+1), end='') # debug print line number prefix
     ch = voice + 10
     s = 0       # state
     chord = None
@@ -60,7 +60,7 @@ def p_staff(voice, f, line, db):
             i = pfind(b)  # do fast lookup for C->60, D->62, c->72, etc
             if i < 0:
                 raise ValueError(f"pitch: {b}, line {line}")
-            note += int(pitch_int[i])
+            note += pitch_int[i]
         elif s == 2:                 # State 2: octave?
             if b == b',':
                 note -= 12
