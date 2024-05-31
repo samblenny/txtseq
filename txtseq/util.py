@@ -58,7 +58,7 @@ def p_ppb(f, line, db):
     x = d.get(get_line(f), None)  # look up time unit -> pulses per beat
     if not x:
         raise ValueError(f"U: line {line}")
-    print(f'{line:2}:', f'ppb={x}')
+    print('%2d: ppb=%d' % (line, x))
     db['ppb'] = x
 
 # Parse a bpm header line like, "B 80" or "B 140".
@@ -66,5 +66,5 @@ def p_ppb(f, line, db):
 # CAUTION: this can raise ValueError for syntax errors.
 def p_bpm(f, line, db):
     x = int(get_line(f))
-    print(f'{line:2}:', f'bpm={x}')
+    print('%2d: bpm=%d' % (line, x))
     db['bpm'] = x

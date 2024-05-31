@@ -29,8 +29,8 @@ def p_staff(voice, f, line, db):
     chord = None
     note = None
     dur = None
-    digits = bytearray(0)
-    c_notes = None
+    digits = bytearray()
+    c_notes = []
     # Start the state machine
     mark = tell()
     b = bytearray(1)
@@ -46,11 +46,9 @@ def p_staff(voice, f, line, db):
                 pass
             elif b == b'{':      # chord?
                 chord = True
-                c_notes = []
             else:                # start a note (accidental?)
                 s = 1
                 note = 60        # "C" is MIDI middle C
-                digits = bytearray()
                 if b == b'_':    # flat?
                     note -= 1
                 elif b == b'^':  # sharp?
@@ -86,11 +84,12 @@ def p_staff(voice, f, line, db):
                 dur = 1
                 if digits:
                     dur = int(digits)
+                    digits = bytearray()
                 pulses = ppb * dur
                 if chord:            # record chord notes
                     for note in c_notes:
                         add_note(ticks, ch, note, pulses, ppb, buf)
-                    c_notes = None
+                    c_notes = []
                     chord = False
                 else:                # record single note
                     add_note(ticks, ch, note, pulses, ppb, buf)

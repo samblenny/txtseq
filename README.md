@@ -60,7 +60,7 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 13: 2 192/48/96 288/84/96
 15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
 16: 2 384/47/96 480/58/96
-[parse time: 253 ms]
+[parse time: 218 ms]
 
 00009A3C 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41 005D8A41
 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48 00BD8A48
@@ -72,7 +72,7 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01809B2F 01DD8B2F 01E09B3A 023D8B3A
 [midi event dump time: 42 ms]
 
-mem_free: 11856 11760 11472   diffs: 96 288
+mem_free: 11888 11792 11520   diffs: 96 272
 ```
 
 1. The top section has debug print output from the parsing functions.

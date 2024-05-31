@@ -20,7 +20,7 @@ def add_note(ticks, ch, note, pulses, ppb, buf):
         raise Exception('ch OOR')
     if not (0 <= note <= 127):
         raise Exception('note OOR')
-    print(f"{ticks}/{note}/{pulses}", end=' ')
+    print('%d/%d/%d ' % (ticks, note, pulses), end='')
     # store note on/off events packed as uint32 (omit velocity)
     # 75% gate time ajustment formula...
     # - for notes shorter than 1 beat, subtract 25% of note's pulses
