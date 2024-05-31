@@ -6,10 +6,12 @@ from .data import beat_len_d
 
 # Advance cursor in binary file f to skip comment
 def comment(f):
+    ri = f.readinto
     seek = f.seek
     tell = f.tell
     mark = tell()
-    while b := f.read(1):
+    b = bytearray(1)
+    while ri(b):
         if b == b'\r' or b == b'\n':
             seek(mark)
             break

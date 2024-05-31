@@ -10,8 +10,10 @@ from .staff import p_staff
 # CAUTION: This raises ValueError for syntax errors.
 def sequencer(f):
     # preload names to avoid repeated dictionary lookups
+    rd = f.read
     tell = f.tell
     seek = f.seek
+    ws = whitespace
     ppb = p_ppb
     bpm = p_bpm
     com = comment
@@ -25,8 +27,8 @@ def sequencer(f):
         'ticks': [0, 0, 0, 0],  # ppqn timestamps for each voice
         'buf': array('L')}      # note on/off events encoded as uint32
     # Parse the leading token of each line (staff, bpm, comment, etc)
-    while b := f.read(1):
-        whitespace(f)
+    while b := rd(1):
+        ws(f)
         if b == b'\r':         # CR or CRLF line ending?
             db['line'] += 1
             mark = tell()      # skip the LF

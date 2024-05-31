@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from .data import pitch_d
 from .notebuf import add_note
 from .util import comment
 
@@ -17,9 +16,13 @@ def p_staff(voice, f, db):
     ticks = db['ticks'][voice]
     buf = db['buf']
     ppb = db['ppb']
-    rd = f.read
+    ri = f.readinto
     tell = f.tell
     seek = f.seek
+    pitches = b'CDEFGABcdefgab'
+    #               0,  2,  4,  5,  7,  9,  11, 12, 14, 16, 17, 19, 21, 23
+    pitch_int = b'\x00\x02\x04\x05\x07\x09\x0b\x0c\x0e\x10\x11\x13\x15\x17'
+    pfind = pitches.find
 
     print(f"{line:2}: {voice+1} ", end='')
     ch = voice + 10
@@ -27,11 +30,12 @@ def p_staff(voice, f, db):
     chord = None
     note = None
     dur = None
-    digits = None
+    digits = bytearray(0)
     c_notes = None
     # Start the state machine
     mark = tell()
-    while b := rd(1):
+    b = bytearray(1)
+    while ri(b):
         if b == b'#':     # Comment works from any state
             comment(f)
             continue
@@ -47,24 +51,25 @@ def p_staff(voice, f, db):
             else:                # start a note (accidental?)
                 s = 1
                 note = 60        # "C" is MIDI middle C
-                digits = []
+                digits = bytearray()
                 if b == b'_':    # flat?
                     note -= 1
                 elif b == b'^':  # sharp?
                     note += 1
                 else:
                     seek(mark)
-        elif s == 1:         # State 1: pitch (required)
+        elif s == 1:             # State 1: pitch (required)
             s = 2
-            if not b in pitch_d:
+            i = pfind(b)  # do fast lookup for C->60, D->62, c->72, etc
+            if i < 0:
                 raise ValueError(f"pitch: {b}, line {line}")
-            note += pitch_d[b]
-        elif s == 2:         # State 2: octave?
+            note += int(pitch_int[i])
+        elif s == 2:                 # State 2: octave?
             if b == b',':
                 note -= 12
             elif b == b"'":
                 note += 12
-            else:                # end of octave...
+            else:                    # end of octave...
                 if chord:
                     c_notes.append(note)
                     if b == b'}':    # end chord?
@@ -77,12 +82,11 @@ def p_staff(voice, f, db):
                     seek(mark)
         elif s == 3:                 # State 3: duration?
             if (b'0' <= b <= b'9'):  # digit?
-                digits.append(b)
+                digits.extend(b)
             else:                    # not digit -> record note(s)
                 dur = 1
                 if digits:
-                    dur = int(b''.join(digits))
-                    digits = None
+                    dur = int(digits)
                 pulses = ppb * dur
                 if chord:            # record chord notes
                     for note in c_notes:
@@ -92,7 +96,7 @@ def p_staff(voice, f, db):
                 else:                # record single note
                     add_note(ticks, ch, note, pulses, ppb, buf)
                 ticks += pulses
-                s = 0            # reset for next note or chord
+                s = 0                # reset for next note or chord
                 seek(mark)
         mark = tell()
     # End of state machine loop
