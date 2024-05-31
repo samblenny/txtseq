@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from .data import crlf, accidental_d, pitch_d
+from .data import pitch_d
 from .notebuf import add_note
-from .util import skip_comment
+from .util import comment
 
 
 # Parse a staff line of plaintext music sequencing notation.
@@ -11,82 +11,90 @@ from .util import skip_comment
 # Results: update db['buf'] and db['ticks'][voice]
 # CAUTION: This can raise ValueError for syntax errors.
 # CAUTION: This includes a hardcoded voice to midi channel mapping!
-def parse_staff(voice, f, db):
+def p_staff(voice, f, db):
+    # preload names to avoid repeated dictionary lookups
     line = db['line']
-    print(f"{line:2}: {voice+1} ", end='')
     ticks = db['ticks'][voice]
+    buf = db['buf']
     ppb = db['ppb']
-    channel = voice + 10
-    state = 0
+    rd = f.read
+    tell = f.tell
+    seek = f.seek
+
+    print(f"{line:2}: {voice+1} ", end='')
+    ch = voice + 10
+    s = 0       # state
     chord = None
     note = None
-    duration = None
+    dur = None
     digits = None
-    chord_notes = None
+    c_notes = None
     # Start the state machine
-    rewind = f.tell()
-    while b := f.read(1):
+    mark = tell()
+    while b := rd(1):
         if b == b'#':     # Comment works from any state
-            skip_comment(f)
+            comment(f)
             continue
-        if state == 0:    # State 0: start of note or chord
-            if b in crlf:
-                f.seek(rewind)
+        if s == 0:    # State 0: start of note or chord
+            if b == b'\r' or b == b'\n':  # line end?
+                seek(mark)
                 break
             elif b == b'|' or b == b'\t' or b == b' ':  # ignore these
                 pass
             elif b == b'{':      # chord?
                 chord = True
-                chord_notes = []
+                c_notes = []
             else:                # start a note (accidental?)
-                state = 1
+                s = 1
                 note = 60        # "C" is MIDI middle C
                 digits = []
-                if b in accidental_d:
-                    note += accidental_d[b]
+                if b == b'_':    # flat?
+                    note -= 1
+                elif b == b'^':  # sharp?
+                    note += 1
                 else:
-                    f.seek(rewind)
-        elif state == 1:         # State 1: pitch (required)
-            state = 2
+                    seek(mark)
+        elif s == 1:         # State 1: pitch (required)
+            s = 2
             if not b in pitch_d:
                 raise ValueError(f"pitch: {b}, line {line}")
             note += pitch_d[b]
-        elif state == 2:         # State 2: octave?
+        elif s == 2:         # State 2: octave?
             if b == b',':
                 note -= 12
             elif b == b"'":
                 note += 12
             else:                # end of octave...
                 if chord:
-                    chord_notes.append(note)
+                    c_notes.append(note)
                     if b == b'}':    # end chord?
-                        state = 3
+                        s = 3
                     else:            # more chord notes?
-                        state = 0
-                        f.seek(rewind)
+                        s = 0
+                        seek(mark)
                 else:                # single note
-                    state = 3
-                    f.seek(rewind)
-        elif state == 3:             # State 3: duration?
+                    s = 3
+                    seek(mark)
+        elif s == 3:                 # State 3: duration?
             if (b'0' <= b <= b'9'):  # digit?
                 digits.append(b)
             else:                    # not digit -> record note(s)
-                duration = 1
+                dur = 1
                 if digits:
-                    duration = int(b''.join(digits))
+                    dur = int(b''.join(digits))
                     digits = None
-                pulses = ppb * duration
+                pulses = ppb * dur
                 if chord:            # record chord notes
-                    for note in chord_notes:
-                        add_note(ticks, channel, note, pulses, db['buf'])
-                    chord_notes = None
+                    for note in c_notes:
+                        add_note(ticks, ch, note, pulses, ppb, buf)
+                    c_notes = None
                     chord = False
                 else:                # record single note
-                    add_note(ticks, channel, note, pulses, db['buf'])
+                    add_note(ticks, ch, note, pulses, ppb, buf)
                 ticks += pulses
-                state = 0            # reset for next note or chord
-                f.seek(rewind)
-        rewind = f.tell()
+                s = 0            # reset for next note or chord
+                seek(mark)
+        mark = tell()
     # End of state machine loop
     if chord:
         raise ValueError(f"unclosed chord, line {line}")

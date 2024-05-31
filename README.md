@@ -47,6 +47,42 @@ the song from track1.txt (see code in `code.py`).
 3. `python3 -m txtseq track1.txt`
 
 
+### Example Output
+
+This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
+
+```
+ 3: ppb=12
+ 4: bpm=140
+ 9: 1 0/60/24 24/62/24 48/64/24 72/65/24 96/67/24 120/69/24 144/71/24 168/72/24
+10: 2 0/48/192
+12: 1 192/71/24 216/69/24 240/67/24 264/65/24 288/64/24 312/62/24 336/60/48
+13: 2 192/48/96 288/84/96
+15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
+16: 2 384/47/96 480/58/96
+[parse time: 289 ms]
+
+00009A3C 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41 005D8A41
+00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48 00BD8A48
+00009B30 00BD8B30 00C09A47 00D58A47 00D89A45 00ED8A45 00F09A43 01058A43
+01089A41 011D8A41 01209A40 01358A40 01389A3E 014D8A3E 01509A3C 017D8A3C
+00C09B30 011D8B30 01209B54 017D8B54 01809A3C 01AD8A3C 01809A3E 01AD8A3E
+01809A43 01AD8A43 01B09A45 01DD8A45 01B09A3C 01DD8A3C 01B09A3E 01DD8A3E
+01E09A3C 01F58A3C 01F89A3C 020D8A3C 02109A3E 02258A3E 02289A43 023D8A43
+01809B2F 01DD8B2F 01E09B3A 023D8B3A
+[midi event dump time: 46 ms]
+
+mem_free: 11216 11120 10848   diffs: 96 272
+```
+
+1. The top section has debug print output from the parsing functions.
+
+2. The middle section is a dump of the array of timestamped midi events
+   created by the note parsing code. (not sorted by timestamp yet)
+
+3. The last line summarizes `mem_free()` measurements. (see `code.py`)
+
+
 ## Reading the Code
 
 1. The [txtseq](txtseq) module exports a function,
@@ -57,18 +93,18 @@ the song from track1.txt (see code in `code.py`).
 
 2. The `seqencer()` function parses its input file to find top level commands,
    which it then uses to call further parsing functions. For example, the
-   commands `1`, `2`, `3`, and `4` call the [`parse_staff()`](txtseq/staff.py)
+   commands `1`, `2`, `3`, and `4` call the [`p_staff()`](txtseq/staff.py)
    function. The numbers correspond to each of the four voices (tracks).
 
 3. To get all the parser code to compile and run on a SAMD21, the module is
    split into several files of mostly less than 100 lines. The parsing style is
    based on state machine loops that examine one byte at a time. When one of
    the parser functions or state if-branches recognizes a byte that should be
-   processed by a different function or state branch, it will rewind the file's
-   cursor position by one byte using the `f.seek(rewind)` idiom.
+   processed by a different function or state branch, it will mark the file's
+   cursor position by one byte using the `f.seek(mark)` idiom.
 
 4. Parsing of note pitch and duration for staff lines happens in the
-   `parse_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
+   `p_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
 
 5. The [`txtseq/util.py`](txtseq/util.py) file holds smaller parsing
    functions for dealing with comments (`# ...`), semantically irrelevant

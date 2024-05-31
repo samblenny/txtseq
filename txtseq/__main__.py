@@ -4,7 +4,7 @@
 # Read music sequence from text file and translate it to timed MIDI messages.
 #
 import os, sys
-from . import sequencer
+from .sequencer import sequencer
 
 
 PROFILE = False  #True
