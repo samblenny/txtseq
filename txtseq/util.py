@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 #
-from .data import beat_len_d
 
 
 # Advance cursor in binary file f to skip comment
@@ -30,12 +29,14 @@ def whitespace(f):
 
 # Return rest of line but strip the whitespace
 def get_line(f):
+    ri = f.readinto
     seek = f.seek
     tell = f.tell
-    chars = []
+    chars = bytearray()
     whitespace(f)
     mark = tell()
-    while b := f.read(1):
+    b = bytearray(1)
+    while ri(b):
         if b == b'\r' or b == b'\n':
             seek(mark)
             break
@@ -43,30 +44,29 @@ def get_line(f):
             comment(f)
             break
         else:
-            chars.append(b)
+            chars.extend(b)
         mark = tell()
-    return b''.join(chars).rstrip()
+    return bytes(chars.rstrip())
 
 # Parse a time unit header line like, "U 1/8" or "U 1/16".
 # Result: updates value of db['ppb'].
 # CAUTION: this can raise ValueError for syntax errors.
 def p_ppb(f, db):
-    p = print
     line = db['line']
-    p(f'{line:2}: ', end='')
-    x = beat_len_d.get(get_line(f), None)  # look up pulses per beat
+    d = {
+        b'1/4':  24, b'1/8':  12, b'1/16':  6, b'1/32':  3,
+        b'1/4T':  8, b'1/8T':  4, b'1/16T': 2, b'1/32T': 1}
+    x = d.get(get_line(f), None)  # look up time unit -> pulses per beat
     if not x:
         raise ValueError(f"U: line {line}")
-    p(f'ppb={x}')
+    print(f'{line:2}:', f'ppb={x}')
     db['ppb'] = x
 
 # Parse a bpm header line like, "B 80" or "B 140".
 # Result: updates value of db['bpm'].
 # CAUTION: this can raise ValueError for syntax errors.
 def p_bpm(f, db):
-    p = print
     line = db['line']
-    p(f'{line:2}: ', end='')
     x = int(get_line(f))
-    p(f'bpm={x}')
+    print(f'{line:2}:', f'bpm={x}')
     db['bpm'] = x

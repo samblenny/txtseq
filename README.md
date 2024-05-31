@@ -60,7 +60,7 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 13: 2 192/48/96 288/84/96
 15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
 16: 2 384/47/96 480/58/96
-[parse time: 255 ms]
+[parse time: 253 ms]
 
 00009A3C 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41 005D8A41
 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48 00BD8A48
@@ -70,9 +70,9 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01809A43 01AD8A43 01B09A45 01DD8A45 01B09A3C 01DD8A3C 01B09A3E 01DD8A3E
 01E09A3C 01F58A3C 01F89A3C 020D8A3C 02109A3E 02258A3E 02289A43 023D8A43
 01809B2F 01DD8B2F 01E09B3A 023D8B3A
-[midi event dump time: 44 ms]
+[midi event dump time: 46 ms]
 
-mem_free: 11680 11584 11312   diffs: 96 272
+mem_free: 11808 11712 11440   diffs: 96 272
 ```
 
 1. The top section has debug print output from the parsing functions.
@@ -110,10 +110,7 @@ mem_free: 11680 11584 11312   diffs: 96 272
    functions for dealing with comments (`# ...`), semantically irrelevant
    whitespace, and setting of header options (`B` for bpm, `U` for time unit)
 
-6. The [`txtseq/data.py`](txtseq/data.py) file holds dictionaries for using
-   hash lookups to simplify various parsing steps.
-
-7. The [`txtseq/notebuf.py`](txtseq/notebuf.py) file has code to manage the
+6. The [`txtseq/notebuf.py`](txtseq/notebuf.py) file has code to manage the
    buffer of timed MIDI note events that accumulate as staff lines get parsed.
 
    Currently, I'm packing note on and off events as uint32 values in an
