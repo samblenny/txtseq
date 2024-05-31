@@ -10,9 +10,8 @@ from .util import comment
 # Results: update db['buf'] and db['ticks'][voice]
 # CAUTION: This can raise ValueError for syntax errors.
 # CAUTION: This includes a hardcoded voice to midi channel mapping!
-def p_staff(voice, f, db):
+def p_staff(voice, f, line, db):
     # preload names to avoid repeated dictionary lookups
-    line = db['line']
     ticks = db['ticks'][voice]
     buf = db['buf']
     ppb = db['ppb']

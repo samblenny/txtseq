@@ -51,8 +51,7 @@ def get_line(f):
 # Parse a time unit header line like, "U 1/8" or "U 1/16".
 # Result: updates value of db['ppb'].
 # CAUTION: this can raise ValueError for syntax errors.
-def p_ppb(f, db):
-    line = db['line']
+def p_ppb(f, line, db):
     d = {
         b'1/4':  24, b'1/8':  12, b'1/16':  6, b'1/32':  3,
         b'1/4T':  8, b'1/8T':  4, b'1/16T': 2, b'1/32T': 1}
@@ -65,8 +64,7 @@ def p_ppb(f, db):
 # Parse a bpm header line like, "B 80" or "B 140".
 # Result: updates value of db['bpm'].
 # CAUTION: this can raise ValueError for syntax errors.
-def p_bpm(f, db):
-    line = db['line']
+def p_bpm(f, line, db):
     x = int(get_line(f))
     print(f'{line:2}:', f'bpm={x}')
     db['bpm'] = x

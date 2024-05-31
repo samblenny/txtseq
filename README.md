@@ -70,9 +70,9 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01809A43 01AD8A43 01B09A45 01DD8A45 01B09A3C 01DD8A3C 01B09A3E 01DD8A3E
 01E09A3C 01F58A3C 01F89A3C 020D8A3C 02109A3E 02258A3E 02289A43 023D8A43
 01809B2F 01DD8B2F 01E09B3A 023D8B3A
-[midi event dump time: 46 ms]
+[midi event dump time: 42 ms]
 
-mem_free: 11808 11712 11440   diffs: 96 272
+mem_free: 11856 11760 11472   diffs: 96 288
 ```
 
 1. The top section has debug print output from the parsing functions.

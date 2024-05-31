@@ -10,47 +10,42 @@ from .staff import p_staff
 # CAUTION: This raises ValueError for syntax errors.
 def sequencer(f):
     # preload names to avoid repeated dictionary lookups
-    rd = f.read
+    ri = f.readinto
     tell = f.tell
     seek = f.seek
     ws = whitespace
+    com = comment
+    line = 1
     ppb = p_ppb
     bpm = p_bpm
-    com = comment
     staff = p_staff
 
     mark = None
     db = {
-        'line': 1,
         'bpm': 120,
         'ppb': 24,              # pulses per beat @24 ppqn
         'ticks': [0, 0, 0, 0],  # ppqn timestamps for each voice
         'buf': array('L')}      # note on/off events encoded as uint32
     # Parse the leading token of each line (staff, bpm, comment, etc)
-    while b := rd(1):
+    b = bytearray(1)
+    while ri(b):
         ws(f)
         if b == b'\r':         # CR or CRLF line ending?
-            db['line'] += 1
+            line += 1
             mark = tell()      # skip the LF
             b = f.read(1)
             if b == b'\n':
                 seek(mark)
         elif b == b'\n':       # LF line ending
-            db['line'] += 1
+            line += 1
         elif b == b'#':        # commment?
             com(f)
         elif b == b'U':
-            ppb(f, db)         # U (updates db['ppb'])
+            ppb(f, line, db)   # U (updates db['ppb'])
         elif b == b'B':
-            bpm(f, db)         # B (updates db['bpm'])
-        elif b == b'1':
-            staff(0, f, db)    # 1 | ...
-        elif b == b'2':
-            staff(1, f, db)    # 2 | ...
-        elif b == b'3':
-            staff(2, f, db)    # 3 | ...
-        elif b == b'4':
-            staff(3, f, db)    # 4 | ...
+            bpm(f, line, db)   # B (updates db['bpm'])
+        elif b == b'1' or b == b'2' or b == b'3' or b == b'4':  # staff?
+            staff(int(b) - int(b'1'), f, line, db)  # 1st argument is voice
         else:
             raise ValueError(f"unexpected token, line {line}: {b}")
     return db['buf']
