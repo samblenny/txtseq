@@ -33,11 +33,11 @@ def p_staff(voice, f, line, db):
     # Start the state machine
     mark = tell()
     b = bytearray(1)
-    while ri(b):
+    while ri(b):     # using readinto() aviods many small allocations
         if b == b'#':     # Comment works from any state
             comment(f)
             continue
-        if s == 0:    # State 0: start of note or chord
+        if s == 0:               # State 0: start of note or chord
             if b == b'\r' or b == b'\n':  # line end?
                 seek(mark)
                 break
