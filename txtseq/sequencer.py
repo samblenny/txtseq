@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
 from array import array
+from gc import collect
 from .util import comment, whitespace, p_ppb, p_bpm
 from .staff import p_staff
 
@@ -48,4 +49,13 @@ def sequencer(f):
             staff(int(b) - int(b'1'), f, line, db)  # 1st argument is voice
         else:
             raise ValueError(f"unexpected token, line {line}: {b}")
+    # Sort the array.array('L) (uint32) encoded sequence of midi events by
+    # ascending timestamp.
+    # CAUTION: The call to sorted() below will allocate a copy of the whole
+    # array, so there is some risk of running out of memory for long sequences!
+    # But, the parser is pretty efficient, so spending some memory here should
+    # probably be fine. In case of problems, switching to an in place sort
+    # might help.
+    collect()
+    db['buf'] = sorted(db['buf'])
     return db['buf']

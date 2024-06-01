@@ -60,19 +60,19 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 13: 2 192/48/96 288/84/96
 15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
 16: 2 384/47/96 480/58/96
-[parse time: 208 ms]
+[parse time: 214 ms]
 
-00009A3C 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41 005D8A41
-00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48 00BD8A48
-00009B30 00BD8B30 00C09A47 00D58A47 00D89A45 00ED8A45 00F09A43 01058A43
-01089A41 011D8A41 01209A40 01358A40 01389A3E 014D8A3E 01509A3C 017D8A3C
-00C09B30 011D8B30 01209B54 017D8B54 01809A3C 01AD8A3C 01809A3E 01AD8A3E
-01809A43 01AD8A43 01B09A45 01DD8A45 01B09A3C 01DD8A3C 01B09A3E 01DD8A3E
-01E09A3C 01F58A3C 01F89A3C 020D8A3C 02109A3E 02258A3E 02289A43 023D8A43
-01809B2F 01DD8B2F 01E09B3A 023D8B3A
-[midi event dump time: 45 ms]
+00009A3C 00009B30 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41
+005D8A41 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48
+00BD8A48 00BD8B30 00C09A47 00C09B30 00D58A47 00D89A45 00ED8A45 00F09A43
+01058A43 01089A41 011D8A41 011D8B30 01209A40 01209B54 01358A40 01389A3E
+014D8A3E 01509A3C 017D8A3C 017D8B54 01809A3C 01809A3E 01809A43 01809B2F
+01AD8A3C 01AD8A3E 01AD8A43 01B09A3C 01B09A3E 01B09A45 01DD8A3C 01DD8A3E
+01DD8A45 01DD8B2F 01E09A3C 01E09B3A 01F58A3C 01F89A3C 020D8A3C 02109A3E
+02258A3E 02289A43 023D8A43 023D8B3A
+[midi event dump time: 46 ms]
 
-mem_free: 12064 11968 11680   diffs: 96 288
+mem_free: 12048 11952 11664   diffs: 96 288
 ```
 
 1. The top section has debug print output from the parsing functions.
@@ -114,9 +114,9 @@ mem_free: 12064 11968 11680   diffs: 96 288
    `array.array('L')`. The most significant 16 bits have a timestamp (units of
    MIDI pulses per quarter note). The low 16 bits have MIDI status and data
    bytes. This allows for adding note events one voice at a time without
-   worrying about out-of-order events. My plan is to do an in-place sort at the
-   end to merge all the events from different voices into one list ordered by
-   ascending timestamps (similar to an SMF format 0 file).
+   worrying about out-of-order events. I sort the array at the end to merge all
+   the events from different voices into one list ordered by ascending
+   timestamps (similar to an SMF format 0 file).
 
 
 ## Music Notation Grammar and Syntax
