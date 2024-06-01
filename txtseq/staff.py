@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
-#
 from .util import comment
 
 
@@ -18,19 +17,19 @@ def p_staff(voice, f, line, db):
     ri = f.readinto
     tell = f.tell
     seek = f.seek
-    # prepare a memory efficient note-letter to integer lookup system
+    # prepare speed and memory efficient pitch letter to integer lookup table
     pitches = b'CDEFGABcdefgab'
     pitch_int = (0,2,4,5,7,9,11,12,14,16,17,19,21,23)
     pfind = pitches.find
 
     p('%2d: %d ' % (line, voice+1), end='') # debug print line number prefix
-    ch = voice + 10
-    s = 0       # state
-    chord = None
-    note = None
-    dur = None
+    ch = voice + 10  # MIDI channel for this voice
+    s = 0            # state machine state
+    chord = False
+    note = 60        # staff starts at "C" (middle C) as MIDI note value 60
+    dur = 1          # note duration as multiple of selected time unit (ppb)
     digits = bytearray()
-    c_notes = []
+    c_notes = []     # list to accumulate notes of a chord
     # Start the state machine
     mark = tell()
     b = bytearray(1)
@@ -49,39 +48,38 @@ def p_staff(voice, f, line, db):
             else:                # start a note (accidental?)
                 s = 1
                 note = 60        # "C" is MIDI middle C
-                if b == b'_':    # flat?
+                if b == b'_':    # _ prefix? -> flat
                     note -= 1
-                elif b == b'^':  # sharp?
+                elif b == b'^':  # ^ prefix? -> sharp
                     note += 1
                 else:
                     seek(mark)
-        elif s == 1:             # State 1: pitch (required)
+        elif s == 1:             # State 1: pitch? (required)
             s = 2
             i = pfind(b)  # do fast lookup for C->60, D->62, c->72, etc
             if i < 0:
                 raise ValueError(f"pitch: {b}, line {line}")
             note += pitch_int[i]
-        elif s == 2:                 # State 2: octave?
-            if b == b',':
+        elif s == 2:                 # State 2: octave? (cumulative)
+            if b == b',':            # , suffix? -> transpose 1 octave down
                 note -= 12
-            elif b == b"'":
+            elif b == b"'":          # ' suffix? -> transpose 1 octave up
                 note += 12
             else:                    # end of octave...
-                if chord:
+                if chord:            # chord mode?
                     c_notes.append(note)
-                    if b == b'}':    # end chord?
+                    if b == b'}':    # end of chord?
                         s = 3
                     else:            # more chord notes?
                         s = 0
                         seek(mark)
-                else:                # single note
+                else:                # single note mode
                     s = 3
                     seek(mark)
         elif s == 3:                 # State 3: duration?
             if (b'0' <= b <= b'9'):  # digit?
                 digits.extend(b)
             else:                    # not digit -> record note(s)
-                dur = 1
                 if digits:
                     dur = int(digits)
                     digits = bytearray()
@@ -95,13 +93,14 @@ def p_staff(voice, f, line, db):
                     add_note(ticks, ch, note, pulses, ppb, buf)
                 ticks += pulses
                 s = 0                # reset for next note or chord
+                dur = 1
                 seek(mark)
         mark = tell()
     # End of state machine loop
     if chord:
         raise ValueError(f"unclosed chord, line {line}")
     p()
-    db['ticks'][voice] = ticks
+    db['ticks'][voice] = ticks  # remember this voice's ending timestamp
 
 # Encode note and append it to the array of uint32 ('L' typecode)
 #  arguments:
@@ -122,6 +121,7 @@ def add_note(ticks, ch, note, pulses, ppb, buf):
     # 75% gate time ajustment formula...
     # - for notes shorter than 1 beat, subtract 25% of note's pulses
     # - for notes longer than 1 beat, subtract 25% of one beat
+    # - resulting gate time must be at least 1 pulse long (`max(1, ...)`)
     ba = buf.append
     ba((ticks << 16) | ((0x90 | ch) << 8) | note)  # note on
     ba(((ticks + max(1,                            # note off
