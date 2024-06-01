@@ -5,12 +5,7 @@
 #
 import os, sys
 from .sequencer import sequencer
-
-
-PROFILE = False  #True
-
-if PROFILE:
-    import cProfile
+from .player import Player
 
 
 def usage():
@@ -21,16 +16,20 @@ def main():
         usage()
         exit(1)
     with open(sys.argv[1], 'rb') as f:
-        seq = sequencer(f)
+        db = sequencer(f)
         print()
-        for (i, s) in enumerate(seq):
-            print(f"{s:08X}", end=' ')
+        for (i, e) in enumerate(db['buf']):
+            print(f"{e:08X}", end=' ')
             if i & 7 == 7:
                 print()
         print()
+        print('\nStarting player')
+        for idle_ms in Player(db, debug=True):
+            if idle_ms > 2:
+                # you can do other work here between MIDI events
+                pass
+            else:
+                pass
+        print('\nDone')
 
-
-if PROFILE:
-    cProfile.run('main()', sort='cumulative')
-else:
-    main()
+main()

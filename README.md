@@ -60,7 +60,7 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 13: 2 192/48/96 288/84/96
 15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
 16: 2 384/47/96 480/58/96
-[parse time: 214 ms]
+[parse time: 218 ms]
 
 00009A3C 00009B30 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41
 005D8A41 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48
@@ -70,17 +70,87 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01AD8A3C 01AD8A3E 01AD8A43 01B09A3C 01B09A3E 01B09A45 01DD8A3C 01DD8A3E
 01DD8A45 01DD8B2F 01E09A3C 01E09B3A 01F58A3C 01F89A3C 020D8A3C 02109A3E
 02258A3E 02289A43 023D8A43 023D8B3A
-[midi event dump time: 46 ms]
+[midi event dump time: 39 ms]
 
-mem_free: 12048 11952 11664   diffs: 96 288
+mem_free: 11312 11216 10848   diffs: 96 368
+
+Starting player
+    0 ms: 9a3c64
+    1 ms: 9b3064
+  375 ms: 8a3c64
+  429 ms: 9a3e64
+  804 ms: 8a3e64
+  858 ms: 9a4064
+ 1233 ms: 8a4064
+ 1286 ms: 9a4164
+ 1661 ms: 8a4164
+ 1715 ms: 9a4364
+ 2090 ms: 8a4364
+ 2143 ms: 9a4564
+ 2518 ms: 8a4564
+ 2572 ms: 9a4764
+ 2947 ms: 8a4764
+ 3000 ms: 9a4864
+ 3375 ms: 8a4864
+ 3375 ms: 8b3064
+ 3429 ms: 9a4764
+ 3429 ms: 9b3064
+ 3804 ms: 8a4764
+ 3858 ms: 9a4564
+ 4233 ms: 8a4564
+ 4286 ms: 9a4364
+ 4661 ms: 8a4364
+ 4715 ms: 9a4164
+ 5090 ms: 8a4164
+ 5090 ms: 8b3064
+ 5143 ms: 9a4064
+ 5143 ms: 9b5464
+ 5518 ms: 8a4064
+ 5572 ms: 9a3e64
+ 5947 ms: 8a3e64
+ 6000 ms: 9a3c64
+ 6804 ms: 8a3c64
+ 6804 ms: 8b5464
+ 6858 ms: 9a3c64
+ 6858 ms: 9a3e64
+ 6859 ms: 9a4364
+ 6860 ms: 9b2f64
+ 7661 ms: 8a3c64
+ 7661 ms: 8a3e64
+ 7662 ms: 8a4364
+ 7715 ms: 9a3c64
+ 7715 ms: 9a3e64
+ 7716 ms: 9a4564
+ 8518 ms: 8a3c64
+ 8518 ms: 8a3e64
+ 8519 ms: 8a4564
+ 8520 ms: 8b2f64
+ 8572 ms: 9a3c64
+ 8572 ms: 9b3a64
+ 8947 ms: 8a3c64
+ 9000 ms: 9a3c64
+ 9375 ms: 8a3c64
+ 9429 ms: 9a3e64
+ 9804 ms: 8a3e64
+ 9858 ms: 9a4364
+10233 ms: 8a4364
+10233 ms: 8b3a64
+
+Done
 ```
 
 1. The top section has debug print output from the parsing functions.
 
-2. The middle section is a dump of the array of timestamped midi events
-   created by the note parsing code. (not sorted by timestamp yet)
+2. The second section is a dump of the array of timestamped midi events
+   created by the note parsing code.
 
-3. The last line summarizes `mem_free()` measurements. (see `code.py`)
+3. The third section summarizes `mem_free()` measurements. (see `code.py`)
+
+4. The last section has debug prints of the ms timestamps and 3-byte message
+   hexdumps for scheduled MIDI messages. It's kinda boring to see collected all
+   togethre in a text document, but if you run the code, you can see the
+   messages print to the console at their scheduled times. All the note on and
+   note off velocities are fixed at 100 (`0x64`).
 
 
 ## Reading the Code

@@ -58,4 +58,4 @@ def sequencer(f):
     # might help.
     collect()
     db['buf'] = sorted(db['buf'])
-    return db['buf']
+    return db
