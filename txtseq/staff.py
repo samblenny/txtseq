@@ -33,7 +33,7 @@ def p_staff(voice, f, line, db):
     # Start the state machine
     mark = tell()
     b = bytearray(1)
-    while ri(b):     # using readinto() aviods many small allocations
+    while ri(b):     # using readinto() avoids many small allocations
         if b == b'#':     # Comment works from any state
             comment(f)
             continue
