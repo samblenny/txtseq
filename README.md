@@ -2,9 +2,9 @@
 <!-- SPDX-FileCopyrightText: Copyright 2024 Sam Blenny -->
 # TxtSeq
 
-**[beta: This works, but it is not finished yet.]**
-
 A four track MIDI sequencer using plaintext music notation.
+
+**[beta: This works, but it is not finished yet.]**
 
 This module is meant to run on CircuitPython boards, providing an alternative
 to sequencing with a tracker or laptop and DAW. The point is to make little
