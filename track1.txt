@@ -7,7 +7,7 @@
 # 4: Bass part 2, bass clef, channel 13, lowest priority
 
 U 1/8T  # time unit is eighth note triplets
-B 180   # tempo is 140 bpm
+B 180   # tempo is 180 bpm
 
 # Lines starting with 1, 2, 3, or 4 are staff lines which add notes to
 # the track for their respective voices.
