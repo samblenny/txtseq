@@ -29,7 +29,7 @@ def p_staff(voice, f, line, db):
     root = (36, 60, 36, 36)[voice]  # bass, treble, bass, bass
 
     p('%2d: %d ' % (line, voice+1), end='') # debug print line number prefix
-    ch = voice + 10  # MIDI channel for this voice
+    ch = voice + 9   # MIDI channel for this voice
     s = 0            # state machine state
     chord = False
     rest = False
