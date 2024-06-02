@@ -17,16 +17,23 @@ def p_staff(voice, f, line, db):
     ri = f.readinto
     tell = f.tell
     seek = f.seek
-    # prepare speed and memory efficient pitch letter to integer lookup table
-    pitches = b'CDEFGABcdefgab'
-    pitch_int = (0,2,4,5,7,9,11,12,14,16,17,19,21,23)
+    # Prepare speed and memory efficient pitch letter to integer lookup table.
+    # The first 14 letters are regular notes. The last 3 are aliases for
+    # open high-hat(^F), closed high-hat (_B), and ride cymbal (_e).
+    pitches = b'CDEFGABcdefgabhHr'
+    pitch_int = (0,2,4,5,7,9,11,12,14,16,17,19,21,23, 6,10,15)
     pfind = pitches.find
+    # select bass or treble clef (MIDI note assignment for C) based on voice #
+    if not (0 <= voice <= 3):
+        raise ValueError("voice OOR, line {line}")
+    root = (36, 60, 36, 36)[voice]  # bass, treble, bass, bass
 
     p('%2d: %d ' % (line, voice+1), end='') # debug print line number prefix
     ch = voice + 10  # MIDI channel for this voice
     s = 0            # state machine state
     chord = False
-    note = 60        # staff starts at "C" (middle C) as MIDI note value 60
+    rest = False
+    note = root      # staff starts at "C" (middle C) as MIDI note value 60
     dur = 1          # note duration as multiple of selected time unit (ppb)
     digits = bytearray()
     c_notes = []     # list to accumulate notes of a chord
@@ -43,11 +50,16 @@ def p_staff(voice, f, line, db):
                 break
             elif b == b'|' or b == b'\t' or b == b' ':  # ignore these
                 pass
+            elif b == b'z':      # rest?
+                if chord:
+                    raise ValueError(f"rest (z) inside chord, line {line}")
+                rest = True
+                s = 3            # skip to duration
             elif b == b'{':      # chord?
                 chord = True
             else:                # start a note (accidental?)
                 s = 1
-                note = 60        # "C" is MIDI middle C
+                note = root      # "C" is MIDI middle C
                 if b == b'_':    # _ prefix? -> flat
                     note -= 1
                 elif b == b'^':  # ^ prefix? -> sharp
@@ -89,6 +101,8 @@ def p_staff(voice, f, line, db):
                         add_note(ticks, ch, note, pulses, ppb, buf)
                     c_notes = []
                     chord = False
+                elif rest:           # rest -> do nothing
+                    rest = False
                 else:                # record single note
                     add_note(ticks, ch, note, pulses, ppb, buf)
                 ticks += pulses
@@ -116,7 +130,8 @@ def add_note(ticks, ch, note, pulses, ppb, buf):
         and (0 <= ch <= 15)
         and (0 <= note <= 127) ):
         raise ValueError('note OOR')  # out of range
-    print('%d/%d/%d ' % (ticks, note, pulses), end='')
+    #print('%d/%d/%d ' % (ticks, note, pulses), end='')
+    print('.', end='')
     # store note on/off events packed as uint32 (omit velocity)
     # 75% gate time ajustment formula...
     # - for notes shorter than 1 beat, subtract 25% of note's pulses

@@ -1,16 +1,32 @@
 # Comments start with a "#"
 
-U 1/8   # time unit is 1/8, so <note>2 is 1/4 note, <note>4 is 1/2 note, etc
-B 140   # tempo is 140 bpm
+# Clef, channel, and scheduling prioirty assignments (these are hardcoded)
+# 1: Percussion, bass clef (C is MIDI 36), channel 10, highest priority
+# 2: Lead, treble clef (C is MIDI note 60), channel 11, second priority
+# 3: Bass part 1, bass clef, channel 12, third priority
+# 4: Bass part 2, bass clef, channel 13, lowest priority
+
+U 1/8T  # time unit is eighth note triplets
+B 180   # tempo is 140 bpm
 
 # Lines starting with 1, 2, 3, or 4 are staff lines which add notes to
-# the track for their respective voices. Voices correspond to midi channels.
+# the track for their respective voices.
 
- 1 | C2 D2 E2 F2 | G2 A2 B2 c2 |   # C is middle-c, "c" is 1 octave above C
-2  | C,16                      |   # 16 * 1/8 = 2 tied whole notes
+# C kick, z rest, H open hi-hat, h closed hi-hat, r ride cymbal, E snare,
+# {CH}2 is a chord of kick and ride for duration of 2/3 of an eighth note
 
-1 | B2 A2 G2 F2 | E2 D2 C4    |    # D2 is quarter note, C4 is half note
-2 | C,8         | c'8         |    # , means 1 octave down and ' means 1 up
+1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | C2z2h2 C2z2H2 E2z2h2 C2z2H2 |
+1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | {CH}2h2H2 C2H2h2 E2z2h2 C2z2C2 |
+1  | CCC CCC CCC CCz rrr rrr rrr rz CCC CCC CCC z^c3
+1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | C2z2h2 C2z2H2 E2z2h2 C2z2H2 |
+1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | {CH}2h2H2 C2H2h2 E2z2h2 C2z2C2 |
+1  | CCC CCC CCC CCz rrr rrr rrr rz z^c3
 
-1 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |  # Chord syntax: {<notes>}<duration>
-2 | _C,8          | ^A,8        |  # accidentals: ^ is sharp, _ is flat
+# 2 | c2 d2 e2 f2 | g2  a2 b2  c2 |  # voice 2 is treble clef: C is middle C
+#3  | C,16                        |  # duration 16 in 1/8 is 2 tied whole notes
+
+#2 | B2 A2 G2   F2 | E2 D2 C4      |  # D2 is 1/4 note, C4 is 1/2 note
+#3 | C,8           | E'8           |  # , means down 1 octave and ' means up
+
+#2 | {CDG}4 {ACD}4 | C2   C2  D2 G2 |  # Chord: {<notes>}<duration>
+#3 | _C,8          | ^A,8           |  # accidentals: ^ is sharp, _ is flat

@@ -26,7 +26,7 @@ def main():
         print()
         for (i, e) in enumerate(db['buf']):
             print(f"{e:08X}", end=' ')
-            if i & 7 == 7:
+            if i % 10 == 9:
                 print()
         print()
         print('\nStarting player')

@@ -38,7 +38,7 @@ def main():
         # Hexdump the array.array('L') of midi events packed as uint32 integers
         for (i, e) in enumerate(db['buf']):
             p(f"{e:08X}", end=' ')
-            if i & 7 == 7:
+            if i % 10 == 9:
                 p()
         p(f'\n[midi event dump time: %s ms]\n' % int((monotonic() - t) * 1000))
         # Print summary of memory use
@@ -50,11 +50,11 @@ def main():
         # Player is a generator that is meant to be called frequently to play
         # MIDI events at their scheduled timestamps. The generator yields
         # the remaining ms until its next scheduled MIDI event (idle_ms).
-        for idle_ms in Player(db, midi_out_callback=midi_tx, debug=True):
-            if idle_ms > 100:
-                collect()  # do a gc.collect() if there's lots of time to spare
-            if idle_ms > 5:
-                # you can do other work here like checking buttons or whatever
+        for idle_ms in Player(db, midi_out_callback=midi_tx, debug=False):
+            if idle_ms > 60:
+                collect()  # gc.collect() if there's lots of spare time
+            if idle_ms > 10:
+                # you can do other work here (check buttons or whatever)
                 pass
             else:
                 pass

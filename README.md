@@ -60,89 +60,46 @@ definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 
 ```
- 3: ppb=12
- 4: bpm=140
- 9: 1 0/60/24 24/62/24 48/64/24 72/65/24 96/67/24 120/69/24 144/71/24 168/72/24
-10: 2 0/48/192
-12: 1 192/71/24 216/69/24 240/67/24 264/65/24 288/64/24 312/62/24 336/60/48
-13: 2 192/48/96 288/84/96
-15: 1 384/60/48 384/62/48 384/67/48 432/69/48 432/60/48 432/62/48 480/60/24 504/60/24 528/62/24 552/67/24
-16: 2 384/47/96 480/58/96
-[parse time: 218 ms]
+ 9: ppb=4
+10: bpm=180
+18: 1 ................
+19: 1 ...................
+20: 1 ...............................
+21: 1 ................
+22: 1 ...................
+23: 1 ......................
+[parse time: 505 ms]
 
-00009A3C 00009B30 00158A3C 00189A3E 002D8A3E 00309A40 00458A40 00489A41
-005D8A41 00609A43 00758A43 00789A45 008D8A45 00909A47 00A58A47 00A89A48
-00BD8A48 00BD8B30 00C09A47 00C09B30 00D58A47 00D89A45 00ED8A45 00F09A43
-01058A43 01089A41 011D8A41 011D8B30 01209A40 01209B54 01358A40 01389A3E
-014D8A3E 01509A3C 017D8A3C 017D8B54 01809A3C 01809A3E 01809A43 01809B2F
-01AD8A3C 01AD8A3E 01AD8A43 01B09A3C 01B09A3E 01B09A45 01DD8A3C 01DD8A3E
-01DD8A45 01DD8B2F 01E09A3C 01E09B3A 01F58A3C 01F89A3C 020D8A3C 02109A3E
-02258A3E 02289A43 023D8A43 023D8B3A
-[midi event dump time: 46 ms]
+00009A24 00078A24 00109A2A 00178A2A 00189A24 001F8A24 00289A2E 002F8A2E 00309A28 00378A28
+00409A2A 00478A2A 00489A24 004F8A24 00589A2E 005F8A2E 00609A24 00678A24 00709A2A 00778A2A
+00789A24 007F8A24 00889A2E 008F8A2E 00909A28 00978A28 00A09A2A 00A78A2A 00A89A24 00AF8A24
+00B89A2E 00BF8A2E 00C09A24 00C78A24 00D09A2A 00D78A2A 00D89A24 00DF8A24 00E89A2E 00EF8A2E
+00F09A28 00F78A28 01009A2A 01078A2A 01089A24 010F8A24 01189A2E 011F8A2E 01209A24 01209A2E
+01278A24 01278A2E 01289A2A 012F8A2A 01309A2E 01378A2E 01389A24 013F8A24 01409A2E 01478A2E
+01489A2A 014F8A2A 01509A28 01578A28 01609A2A 01678A2A 01689A24 016F8A24 01789A24 017F8A24
+01809A24 01838A24 01849A24 01878A24 01889A24 018B8A24 018C9A24 018F8A24 01909A24 01938A24
+01949A24 01978A24 01989A24 019B8A24 019C9A24 019F8A24 01A09A24 01A38A24 01A49A24 01A78A24
+01A89A24 01AB8A24 01B09A33 01B38A33 01B49A33 01B78A33 01B89A33 01BB8A33 01BC9A33 01BF8A33
+01C09A33 01C38A33 01C49A33 01C78A33 01C89A33 01CB8A33 01CC9A33 01CF8A33 01D09A33 01D38A33
+01D49A33 01D78A33 01DC9A24 01DF8A24 01E09A24 01E38A24 01E49A24 01E78A24 01E89A24 01EB8A24
+01EC9A24 01EF8A24 01F09A24 01F38A24 01F49A24 01F78A24 01F89A24 01FB8A24 01FC9A24 01FF8A24
+02049A31 020F8A31 02109A24 02178A24 02209A2A 02278A2A 02289A24 022F8A24 02389A2E 023F8A2E
+02409A28 02478A28 02509A2A 02578A2A 02589A24 025F8A24 02689A2E 026F8A2E 02709A24 02778A24
+02809A2A 02878A2A 02889A24 028F8A24 02989A2E 029F8A2E 02A09A28 02A78A28 02B09A2A 02B78A2A
+02B89A24 02BF8A24 02C89A2E 02CF8A2E 02D09A24 02D78A24 02E09A2A 02E78A2A 02E89A24 02EF8A24
+02F89A2E 02FF8A2E 03009A28 03078A28 03109A2A 03178A2A 03189A24 031F8A24 03289A2E 032F8A2E
+03309A24 03309A2E 03378A24 03378A2E 03389A2A 033F8A2A 03409A2E 03478A2E 03489A24 034F8A24
+03509A2E 03578A2E 03589A2A 035F8A2A 03609A28 03678A28 03709A2A 03778A2A 03789A24 037F8A24
+03889A24 038F8A24 03909A24 03938A24 03949A24 03978A24 03989A24 039B8A24 039C9A24 039F8A24
+03A09A24 03A38A24 03A49A24 03A78A24 03A89A24 03AB8A24 03AC9A24 03AF8A24 03B09A24 03B38A24
+03B49A24 03B78A24 03B89A24 03BB8A24 03C09A33 03C38A33 03C49A33 03C78A33 03C89A33 03CB8A33
+03CC9A33 03CF8A33 03D09A33 03D38A33 03D49A33 03D78A33 03D89A33 03DB8A33 03DC9A33 03DF8A33
+03E09A33 03E38A33 03E49A33 03E78A33 03F09A31 03FB8A31
+[midi event dump time: 191 ms]
 
-mem_free: 11264 11168 10800   diffs: 96 368
+mem_free: 10976 10880 9744   diffs: 96 1136
 
 Playing on USB MIDI ch10-13...
-0
-1
-375
-429
-804
-858
-1233
-1286
-1661
-1715
-2090
-2143
-2518
-2572
-2947
-3000
-3375
-3375
-3429
-3429
-3804
-3858
-4233
-4286
-4661
-4715
-5090
-5090
-5143
-5143
-5518
-5572
-5947
-6000
-6804
-6804
-6858
-6858
-6858
-6858
-7661
-7661
-7662
-7715
-7715
-7716
-8518
-8518
-8519
-8520
-8572
-8572
-8947
-9000
-9375
-9429
-9804
-9858
-10233
-10233
 Done
 ```
 
@@ -153,9 +110,7 @@ Done
 
 3. The third section summarizes `mem_free()` measurements. (see `code.py`)
 
-4. The last section has debug prints of the ms timestamps when each MIDI event
-   got sent by my Trinket M0. You can use these to check USB MIDI output
-   latency for chord notes by comparing timestamps (e.g. 7661, 7661, 7662).
+4. The last section has debug prints from the MIDI event player.
 
 
 ## Reading the Code
@@ -219,6 +174,8 @@ The short summary:
 
 - Single note: `<accidental><pitch><octave><duration>` (e.g. `C` `_B,` `c2`)
 
+- Rest: `z<duration>` (e.g. `z` `z2` `z16`)
+
 - Chord note: `<accidental><pitch><octave>`
 
 - Chord: `{<chord note><chord note>...}<duration>` (e.g. `{C^DA}4` `{ceg}`)
@@ -226,6 +183,10 @@ The short summary:
 - Accidental: `_` (flat), `^` (sharp), or the empty string (natural)
 
 - Note: `C D E F G A B c d e f g a b` (`C` is middle-c, `c` is 1 octave up)
+
+- Note aliases: you can use some shorter aliases to write percussion parts:
+  `h` for `^F _G` (closed hi-hat), `H` for `_B ^A` (open hi-hat), and `r` for
+  `_e ^d` (ride cymbal)
 
 - Octave: `,` (lower by 1 octave), `'` (raise by one octave), repeated commas
   or single-quotes are cumulative (`,,` lowers 2 octaves, `'''` raises by 3).
@@ -243,9 +204,56 @@ The short summary:
   one measure (e.g. `C,16` with time unit set to `1/8` would be played the same
   as 2 tied whole notes in 4/4 time)
 
-  Example: `1 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
+  Example: `2 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
 
   For more examples, see [`track1.txt`](track1.txt)
+
+
+### Bass Clef Percussion Notes on Voice 1
+
+The General MIDI standard includes a mapping of percussion sounds for MIDI
+channel 10, notes 35 to 81. The sounds for a typical Western drum kit (kick,
+snare, hi-hat, cymbal, etc) use notes in the bass clef, starting approximately
+2 octaves below middle C. To avoid having to write things like `B,,,` or `C,,`
+every time you want a kick drum, voice 1 uses bass clef note names.
+
+Bass clef note names are 2 octaves (24 MIDI notes) lower than the equivalent
+treble clef note names. So, bass clef `C` is the same MIDI note as `C,,` in
+treble clef.
+
+Also, because the hi-hats and ride cymbal would otherwise need to be spelled
+with a flat or sharp prefix, I included the aliases `h`, `H`, and `r`. For
+quick reference, these are the notes for some common drum sounds:
+
+| Bass Note | MIDI # | Sound               |
+| --------- | ------ | ------------------- |
+|  C        | 36     | Electric Bass Drum  |
+|  E        | 40     | Electric Snare      |
+| ^F _G h   | 42     | Closed Hi-Hat       |
+| _B ^A H   | 46     | Open Hi-Hat         |
+| _e ^d r   | 51     | Ride Cymbal         |
+
+
+### Priority Scheduling of MIDI Messages
+
+For a MIDI link that can move 1 message per 1 ms, playing a chord of 3 notes
+would take 3 ms to send. If the chord was meant to play on the same beat as a
+drum strike and a CC update, the whole group would take 5 ms to send. But, if
+the drum messages get sent first, the timing will sound tighter.
+
+Considering that low latency matters more for percussion, giving scheduling
+priority to messages for the percussion (usually MIDI channel 10) should help
+to make the most of available MIDI bandwidth.
+
+To allow for efficient percussion-priority sorting of MIDI events, I hardcoded
+the player to use the following txtseq voice to MIDI channel mapping:
+
+| voice | MIDI channel | Scheduling Priority |
+| ----- | ------------ | ------------------- |
+| 1     | 10           | 1                   |
+| 2     | 11           | 2                   |
+| 3     | 12           | 3                   |
+| 4     | 13           | 4                   |
 
 
 ## On Timing and Polyphony
@@ -302,28 +310,6 @@ out to around 112 to 184 miles per 1 ms, so the link latency is very low.
 The point is that, to make a MIDI gadget that would be suitable for use in live
 performances, aiming for MIDI link latency of 5 ms or less under normal
 conditions would probably be worth the trouble.
-
-
-### Priority Scheduling of MIDI Messages
-
-For a MIDI link that can move 1 message per 1 ms, playing a chord of 3 notes
-would take 3 ms to send. If the chord was meant to play on the same beat as a
-drum strike and a CC update, the whole group would take 5 ms to send. But, if
-the drum messages get sent first, the timing will sound tighter.
-
-Considering that low latency matters more for percussion, giving scheduling
-priority to messages for the percussion (usually MIDI channel 10) should help
-to make the most of available MIDI bandwidth.
-
-To allow for efficient percussion-priority sorting of MIDI events, I hardcoded
-the player to use the following txtseq voice to MIDI channel mapping:
-
-| voice | MIDI channel | Scheduling Priority |
-| ----- | ------------ | ------------------- |
-| 1     | 10           | 1                   |
-| 2     | 11           | 2                   |
-| 3     | 12           | 3                   |
-| 4     | 13           | 4                   |
 
 
 ## System Architecture Plan
