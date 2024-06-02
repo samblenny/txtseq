@@ -2,6 +2,8 @@
 <!-- SPDX-FileCopyrightText: Copyright 2024 Sam Blenny -->
 # TxtSeq
 
+**[beta: This works, but it is not finished yet.]**
+
 A four track MIDI sequencer using plaintext music notation.
 
 This module is meant to run on CircuitPython boards, providing an alternative
@@ -24,9 +26,8 @@ most of the code (all but MIDI out) also runs on desktop python3.
 ### CircuitPython Version
 
 1. Prepare a host computer with something that can play sounds for incoming
-   MIDI notes on channels 10, 11, 12, and 13 (txtseq voices 1, 2, 3, and 4).
-   For example, on macOS, you can use Garageband by adding a MIDI track to an
-   empty project.
+   USB MIDI notes on channels 10, 11, 12, and 13. For example, on macOS, you
+   can use the GarageBand app by adding a MIDI track to an empty project.
 
 2. Update CircuitPython and bootloader the normal way. (no additional libraries
    are needed)
