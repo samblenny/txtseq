@@ -10,7 +10,7 @@
 # returns control to your event loop, you can check how many idle ms are
 # available for doing other work without delaying the MIDI event timing.
 #
-def Player(db, debug=False):
+def Player(db, midi_out_callback, debug=False):
     # Unpack a db object created by .sequencer.sequencer()
     ppb = db['ppb']  # pulses per beat (derived from time unit cmd, U)
     bpm = db['bpm']  # beats per minute (from bpm command, B)
@@ -35,15 +35,20 @@ def Player(db, debug=False):
     mask = 0x3fffffff    # (2**29)-1, because ticks_ms rolls over at 2**29
     yield 0              # return generator before sending first event
     t0 = ms()            # first iteration: get epoch timestamp in ms
-    t1 = t0
-    for e in buf:             # loop over all scheduled MIDI events
-        tNext = mspp * (e >> 16)  # convert event time from pulses to ms
-        t1 = ((ms() - t0) & mask)
-        while tNext > t1:         # yield while not yet time for next event
-            yield tNext - t1      # return value is remaining ms
-            t1 = ((ms() - t0) & mask)
-        # Once scheduled time is reached, send the MIDI message
+    now = t0
+    # Expected encoding format of MIDI event packed into uint32:
+    # - (e >> 16)       :  timestamp in pulses
+    # - (e >>  8) & 0xff:  MIDI status byte (note-on or note-off)
+    # - (e      ) & 0xff:  MIDI note data byte (velocity is appended below)
+    for e in buf:                   # loop over all scheduled MIDI events
+        tNext = mspp * (e >> 16)    # convert event time from pulses to ms
+        now = ((ms() - t0) & mask)
+        while tNext > now:          # yield while not yet time for next event
+            yield tNext - now       # return value is remaining ms
+            now = ((ms() - t0) & mask)
+        # Once scheduled time is reached, use callback to send MIDI message
+        msg = ((e & 0xffff) << 8) | 0x64   # hardcode velocity as 0x64=100
+        midi_out_callback(msg.to_bytes(3, 'big'))
         if(debug):
-            print('%5d ms: %04x' % (t1, ((e & 0xffff) << 8) | 0x64))
-        else:
-            print('.', end='')
+            # Print ms timestamp for this event (for checking latency)
+            print(now)

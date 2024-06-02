@@ -2,8 +2,6 @@
 <!-- SPDX-FileCopyrightText: Copyright 2024 Sam Blenny -->
 # TxtSeq
 
-**WORK IN PROGRESS (some of this is still a bit aspirational)**
-
 A four track MIDI sequencer using plaintext music notation.
 
 This module is meant to run on CircuitPython boards, providing an alternative
@@ -20,25 +18,35 @@ a microcontroller.
 ## How to Run the Code
 
 I've been testing this with CircuitPython 9.0.5 on a Trinket M0 (SAMD21), but
-it also runs on desktop python3.
+most of the code (all but MIDI out) also runs on desktop python3.
 
 
 ### CircuitPython Version
 
-1. Update CircuitPython and bootloader the normal way. (no additional libraries
+1. Prepare a host computer with something that can play sounds for incoming
+   MIDI notes on channels 10, 11, 12, and 13 (txtseq voices 1, 2, 3, and 4).
+   For example, on macOS, you can use Garageband by adding a MIDI track to an
+   empty project.
+
+2. Update CircuitPython and bootloader the normal way. (no additional libraries
    are needed)
 
-2. Copy [txtseq](txtseq) module to CIRCUITPY drive (okay to omit `__main__.py`)
+3. Copy [txtseq](txtseq) module to CIRCUITPY drive (okay to omit `__main__.py`)
 
-3. Copy [code.py](code.py), [boot.py](boot.py), and [track1.txt](track1.txt) to
+4. Copy [code.py](code.py), [boot.py](boot.py), and [track1.txt](track1.txt) to
    CIRCUITPY drive
 
-The parser output should show on the serial console. The numbers on the last
-line indicate free memory at different points during loading and parsing of
-the song from track1.txt (see code in `code.py`).
+When `code.py` runs, it will parse music notation from `track1.txt` into an
+array of MIDI note event data, then start playing the notes over USB MIDI. The
+parser and playback code print a variety of debug info to the serial console to
+help with measuring memory and CPU use along with MIDI playback latency.
 
 
 ### Desktop Version
+
+This will give debug prints only, without actual MIDI playback. But, you could
+easily modify the code to use a library that is capable of sending MIDI. (see
+definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 
 1. Clone this repo
 
@@ -70,72 +78,71 @@ This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
 01AD8A3C 01AD8A3E 01AD8A43 01B09A3C 01B09A3E 01B09A45 01DD8A3C 01DD8A3E
 01DD8A45 01DD8B2F 01E09A3C 01E09B3A 01F58A3C 01F89A3C 020D8A3C 02109A3E
 02258A3E 02289A43 023D8A43 023D8B3A
-[midi event dump time: 39 ms]
+[midi event dump time: 46 ms]
 
-mem_free: 11312 11216 10848   diffs: 96 368
+mem_free: 11264 11168 10800   diffs: 96 368
 
-Starting player
-    0 ms: 9a3c64
-    1 ms: 9b3064
-  375 ms: 8a3c64
-  429 ms: 9a3e64
-  804 ms: 8a3e64
-  858 ms: 9a4064
- 1233 ms: 8a4064
- 1286 ms: 9a4164
- 1661 ms: 8a4164
- 1715 ms: 9a4364
- 2090 ms: 8a4364
- 2143 ms: 9a4564
- 2518 ms: 8a4564
- 2572 ms: 9a4764
- 2947 ms: 8a4764
- 3000 ms: 9a4864
- 3375 ms: 8a4864
- 3375 ms: 8b3064
- 3429 ms: 9a4764
- 3429 ms: 9b3064
- 3804 ms: 8a4764
- 3858 ms: 9a4564
- 4233 ms: 8a4564
- 4286 ms: 9a4364
- 4661 ms: 8a4364
- 4715 ms: 9a4164
- 5090 ms: 8a4164
- 5090 ms: 8b3064
- 5143 ms: 9a4064
- 5143 ms: 9b5464
- 5518 ms: 8a4064
- 5572 ms: 9a3e64
- 5947 ms: 8a3e64
- 6000 ms: 9a3c64
- 6804 ms: 8a3c64
- 6804 ms: 8b5464
- 6858 ms: 9a3c64
- 6858 ms: 9a3e64
- 6859 ms: 9a4364
- 6860 ms: 9b2f64
- 7661 ms: 8a3c64
- 7661 ms: 8a3e64
- 7662 ms: 8a4364
- 7715 ms: 9a3c64
- 7715 ms: 9a3e64
- 7716 ms: 9a4564
- 8518 ms: 8a3c64
- 8518 ms: 8a3e64
- 8519 ms: 8a4564
- 8520 ms: 8b2f64
- 8572 ms: 9a3c64
- 8572 ms: 9b3a64
- 8947 ms: 8a3c64
- 9000 ms: 9a3c64
- 9375 ms: 8a3c64
- 9429 ms: 9a3e64
- 9804 ms: 8a3e64
- 9858 ms: 9a4364
-10233 ms: 8a4364
-10233 ms: 8b3a64
-
+Playing on USB MIDI ch10-13...
+0
+1
+375
+429
+804
+858
+1233
+1286
+1661
+1715
+2090
+2143
+2518
+2572
+2947
+3000
+3375
+3375
+3429
+3429
+3804
+3858
+4233
+4286
+4661
+4715
+5090
+5090
+5143
+5143
+5518
+5572
+5947
+6000
+6804
+6804
+6858
+6858
+6858
+6858
+7661
+7661
+7662
+7715
+7715
+7716
+8518
+8518
+8519
+8520
+8572
+8572
+8947
+9000
+9375
+9429
+9804
+9858
+10233
+10233
 Done
 ```
 
@@ -146,11 +153,9 @@ Done
 
 3. The third section summarizes `mem_free()` measurements. (see `code.py`)
 
-4. The last section has debug prints of the ms timestamps and 3-byte message
-   hexdumps for scheduled MIDI messages. It's kinda boring to see collected all
-   togethre in a text document, but if you run the code, you can see the
-   messages print to the console at their scheduled times. All the note on and
-   note off velocities are fixed at 100 (`0x64`).
+4. The last section has debug prints of the ms timestamps when each MIDI event
+   got sent by my Trinket M0. You can use these to check USB MIDI output
+   latency for chord notes by comparing timestamps (e.g. 7661, 7661, 7662).
 
 
 ## Reading the Code
@@ -166,12 +171,17 @@ Done
    commands `1`, `2`, `3`, and `4` call the [`p_staff()`](txtseq/staff.py)
    function. The numbers correspond to each of the four voices (tracks).
 
+   Note on and off events generated by the parser get packed as uint32 values
+   in an `array.array('L')`. The most significant 16 bits have a timestamp
+   (units of MIDI pulses). The low 16 bits have MIDI status and data bytes.
+   This allows for adding note events one voice at a time without worrying
+   about out-of-order events. I sort the array at the end to merge all the
+   events from different voices into one list ordered by ascending timestamps.
+
 3. To get all the parser code to compile and run on a SAMD21, the module is
-   split into several files of mostly less than 100 lines. The parsing style is
-   based on state machine loops that examine one byte at a time. When one of
-   the parser functions or state if-branches recognizes a byte that should be
-   processed by a different function or state branch, it will mark the file's
-   cursor position by one byte using the `f.seek(mark)` idiom.
+   split into several files of less than 150 lines each. Also, I used several
+   MicroPython optimization techniques from Damien George's 2018 PyCon AU talk,
+   "Writing fast and efficient MicroPython".
 
 4. The [`txtseq/util.py`](txtseq/util.py) file holds parsing functions for
    dealing with comments (`# ...`), semantically irrelevant whitespace, and
@@ -180,13 +190,18 @@ Done
 5. Parsing of note pitch and duration for staff lines happens in the
    `p_staff()` function of [`txtseq/staff.py`](txtseq/staff.py).
 
-   Currently, I'm packing note on and off events as uint32 values in an
-   `array.array('L')`. The most significant 16 bits have a timestamp (units of
-   MIDI pulses per quarter note). The low 16 bits have MIDI status and data
-   bytes. This allows for adding note events one voice at a time without
-   worrying about out-of-order events. I sort the array at the end to merge all
-   the events from different voices into one list ordered by ascending
-   timestamps (similar to an SMF format 0 file).
+   The parsing style is based on state machine loops that examine one byte at a
+   time, reading bytes with `readinto()` to limit heap allocations. When one of
+   the parser functions or state machine branches recognizes a byte that should
+   be processed by a different function or state branch, it will rewind the
+   file's cursor position by one byte using the `f.seek(mark)` idiom.
+
+6. Playback uses a generator defined in [`txtseq/player.py`](txtseq/player.py).
+   By using the generator as the iterator for an event loop, it's easy to run
+   your own code interleaved with the MIDI player (see `main()` in `code.py`).
+   Also, holding playback state in the local scope of a generator makes it
+   possible to avoid many heap allocations and dictionary lookups that would
+   add jitter and latency if the MIDI player used a class instance.
 
 
 ## Music Notation Grammar and Syntax
@@ -297,8 +312,18 @@ drum strike and a CC update, the whole group would take 5 ms to send. But, if
 the drum messages get sent first, the timing will sound tighter.
 
 Considering that low latency matters more for percussion, giving scheduling
-priority to messages for the percussion channel should help to make the most of
-available MIDI bandwidth.
+priority to messages for the percussion (usually MIDI channel 10) should help
+to make the most of available MIDI bandwidth.
+
+To allow for efficient percussion-priority sorting of MIDI events, I hardcoded
+the player to use the following txtseq voice to MIDI channel mapping:
+
+| voice | MIDI channel | Scheduling Priority |
+| ----- | ------------ | ------------------- |
+| 1     | 10           | 1                   |
+| 2     | 11           | 2                   |
+| 3     | 12           | 3                   |
+| 4     | 13           | 4                   |
 
 
 ## System Architecture Plan
@@ -310,8 +335,7 @@ My plan for a system to get good timing resolution using limited resources...
 
    For example, it should be possible to write that voice 1 has a kick drum on
    measure 1, beat 1, and that voice 2 has the openning note of a bass line
-   starting on that same beat. Voice 1 could play on MIDI channel 10, and voice
-   2 could use channel 2 (or 3, or whatever).
+   starting on that same beat.
 
 2. Provide notation for polyphony within a voice (chords). For example, a chord
    of 3 notes would get sent as a series of 3 note-on messages, then 3 note-off
@@ -322,4 +346,7 @@ My plan for a system to get good timing resolution using limited resources...
    percussion on voice 1.
 
 4. Store MIDI events packed as integers in an `array.array('L')` to save memory
-   compared to regular lists of objects.
+   compared to regular lists of objects. This works for note on and off events
+   with a very straightforward encoding, as long as I always send the velocity
+   as a hardcoded constant. MIDI CC messages would be a hassle to pack into
+   uint32, so I won't worry about those for now.
