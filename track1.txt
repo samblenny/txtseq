@@ -1,10 +1,11 @@
 # Comments start with a "#"
 
-# Clef, channel, and scheduling prioirty assignments (these are hardcoded)
-# 1: Percussion, bass clef (C is MIDI 36), channel 10, highest priority
-# 2: Lead, treble clef (C is MIDI note 60), channel 11, second priority
-# 3: Bass part 1, bass clef, channel 12, third priority
-# 4: Bass part 2, bass clef, channel 13, lowest priority
+# To keep things simple, some behaviors of voices are hardcoded:
+#  Voice: Role,   Clef,                       MIDI channel, scheduling priority
+#      1: Drums,  Bass clef (C is MIDI 36),   ch 10,        highest
+#      2: Lead,   Treble clef (C is MIDI 60), ch 11,        second
+#      3: Bass 1, Bass clef,                  ch 12,        third
+#      4: Bass 2, Bass clef,                  ch 13,        fourth
 
 U 1/8T  # time unit is eighth note triplets
 B 180   # tempo is 180 bpm
