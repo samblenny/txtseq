@@ -15,6 +15,15 @@ else, the sequencer uses a simpler grammar and syntax that is easy to parse on
 a microcontroller.
 
 
+### CircuitPython + GarageBand Audio Demo
+
+To hear what the commit 9c73ec4 version of
+[`track1.txt`](https://github.com/samblenny/txtseq/blob/9c73ec461f7b4e2ec9c85522e71e7e66b72405bd/track1.txt)
+sounds like when played from a Trinket M0 over USB MIDI into a MIDI drum
+instrument in GarageBand, you can listen to
+[`demos/track1-180bpm.mp3`](demos/track1-180bpm.mp3).
+
+
 ## How to Run the Code
 
 I've been testing this with CircuitPython 9.0.5 on a Trinket M0 (SAMD21), but
@@ -39,13 +48,6 @@ When `code.py` runs, it will parse music notation from `track1.txt` into an
 array of MIDI note event data, then start playing the notes over USB MIDI. The
 parser and playback code print a variety of debug info to the serial console to
 help with measuring memory and CPU use along with MIDI playback latency.
-
-#### Audio Demo
-
-To hear what track1.txt sounds like (as of
-[commit 9c73ec4](https://github.com/samblenny/txtseq/commit/9c73ec461f7b4e2ec9c85522e71e7e66b72405bd))
-when played through a MIDI drum instrument in GarageBand, you can listen to
-[`demos/track1-180bpm.mp3`](demos/track1-180bpm.mp3).
 
 
 ### Desktop Version
