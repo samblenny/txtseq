@@ -13,7 +13,7 @@ B 180   # tempo is 180 bpm
 # the track for their respective voices.
 
 # C kick, z rest, H open hi-hat, h closed hi-hat, r ride cymbal, E snare,
-# {CH}2 is a chord of kick and ride for duration of 2/3 of an eighth note
+# {CH}2 is a chord of kick and hi-hat for duration of 2/3 of an eighth note
 
 1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | C2z2h2 C2z2H2 E2z2h2 C2z2H2 |
 1  | C2z2h2 C2z2H2 E2z2h2 C2z2H2 | {CH}2h2H2 C2H2h2 E2z2h2 C2z2C2 |
