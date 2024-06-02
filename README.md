@@ -40,6 +40,13 @@ array of MIDI note event data, then start playing the notes over USB MIDI. The
 parser and playback code print a variety of debug info to the serial console to
 help with measuring memory and CPU use along with MIDI playback latency.
 
+#### Audio Demo
+
+To hear what track1.txt sounds like (as of
+[commit 9c73ec4](https://github.com/samblenny/txtseq/commit/9c73ec461f7b4e2ec9c85522e71e7e66b72405bd))
+when played through a MIDI drum instrument in GarageBand, you can listen to
+[`demos/track1-180bpm.mp3`](demos/track1-180bpm.mp3).
+
 
 ### Desktop Version
 
