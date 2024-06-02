@@ -3,7 +3,6 @@
 # TxtSeq
 
 A tiny 4-voice plaintext midi sequencer for CircuitPython.
-
 **[beta: This works, but it is not finished yet.]**
 
 This module is meant to run on CircuitPython boards, providing an alternative
