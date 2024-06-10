@@ -1,0 +1,6 @@
+U 1/8
+B 120
+
+# Try this with https://samblenny.github.io/web-midi-drumkit/
+
+1 | {Ch}{Ch} {Dh}h {Ch}h {Dh}h | {Ch}{h} {Dh}h {Ch}h {Dh}h |

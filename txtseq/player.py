@@ -15,6 +15,7 @@ def Player(db, midi_out_callback, debug=False):
     ppb = db['ppb']  # pulses per beat (derived from time unit cmd, U)
     bpm = db['bpm']  # beats per minute (from bpm command, B)
     buf = db['buf']  # array.array('L') uint32 of packed midi events
+    end = max(db['ticks'])  # length of track (including rests at the end!)
     # preload a function to get milliseconds
     try:
         # The supervisor module only works on CircuitPython
@@ -52,3 +53,11 @@ def Player(db, midi_out_callback, debug=False):
         if(debug):
             # Print ms timestamp for this event (for checking latency)
             print(now)
+    # If sequence ends on a rest, wait until the end of the rest
+    tNext = mspp * end
+    now = ((ms() - t0) & mask)
+    while tNext > now:
+        yield tNext - now
+        now = ((ms() - t0) & mask)
+    if(debug):
+        print(now)

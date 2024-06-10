@@ -36,6 +36,20 @@ instrument in GarageBand, you can listen to
 [`demos/track1-180bpm.mp3`](demos/track1-180bpm.mp3).
 
 
+## Hardware and Looping Playback
+
+I developed the sequencer on a Trinket M0 (non-Express SAMD21) to make sure it
+would be small and fast. While I haven't tested on other CircuitPython boards,
+probably the code will run fine, as long as you use a board that supports USB
+MIDI. If you want to use hardwired DIN-5 or TRS MIDI, take a look at the
+`midi_tx()` callback function defined in `code.py`.
+
+The current `code.py` configures `board.A0` (silkscreen `1~` on Trinket M0) as
+a digital input to control looping playback. If you don't connect anything to
+`A0`, the sequence will play through once when the code loads. If you connect
+`A0` to `GND`, the sequence plays in a loop.
+
+
 ## How to Run the Code
 
 I've been testing this with CircuitPython 9.0.5 on a Trinket M0 (SAMD21), but
@@ -46,7 +60,10 @@ most of the code (all but MIDI out) also runs on desktop python3.
 
 1. Prepare a host computer with something that can play sounds for incoming
    USB MIDI notes on channels 10, 11, 12, and 13. For example, on macOS, you
-   can use the GarageBand app by adding a MIDI track to an empty project.
+   can use the GarageBand app by adding a MIDI track to an empty project. If
+   you only care about drum parts, you could try my browser-based drum synth,
+   [web-midi-drumkit](https://samblenny.github.io/web-midi-drumkit/) (requires
+   Chrome browser for WebMIDI support).
 
 2. Update CircuitPython and bootloader the normal way. (no additional libraries
    are needed)
