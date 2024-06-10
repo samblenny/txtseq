@@ -15,6 +15,18 @@ else, the sequencer uses a simpler grammar and syntax that is easy to parse on
 a microcontroller.
 
 
+### For Adafruit Playground Guide Readers
+
+If you found your way here by way of the
+"[Tiny Plaintext MIDI Sequencer for SAMD21](https://adafruit-playground.com/u/SamBlenny/pages/tiny-plaintext-midi-sequencer-for-samd21)"
+page on the Adafruit Playground site, that writeup refers to the sequencer code
+as of release v0.2.1. By the time you read this, the sequencer code here may
+have evolved a bit. If you want to see the state of this project at the time I
+wrote the Playground guide, take a look at:
+- [v0.2.1 README and code browser](https://github.com/samblenny/txtseq/tree/v0.2.1)
+- [v0.2.1 Release page](https://github.com/samblenny/txtseq/releases/tag/v0.2.1)
+
+
 ### CircuitPython + GarageBand Audio Demo
 
 To hear what the commit 9c73ec4 version of
@@ -61,64 +73,6 @@ definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 2. `cd txtseq`
 
 3. `python3 -m txtseq track1.txt`
-
-
-### Example Output
-
-This is from running `code.py` on a Trinket M0 with CircuitPython 9.0.5:
-
-```
-10: ppb=4
-11: bpm=180
-19: 1 ................
-20: 1 ...................
-21: 1 ...............................
-22: 1 ................
-23: 1 ...................
-24: 1 ......................
-[parse time: 517 ms]
-
-00009924 00078924 0010992A 0017892A 00189924 001F8924 0028992E 002F892E 00309928 00378928
-0040992A 0047892A 00489924 004F8924 0058992E 005F892E 00609924 00678924 0070992A 0077892A
-00789924 007F8924 0088992E 008F892E 00909928 00978928 00A0992A 00A7892A 00A89924 00AF8924
-00B8992E 00BF892E 00C09924 00C78924 00D0992A 00D7892A 00D89924 00DF8924 00E8992E 00EF892E
-00F09928 00F78928 0100992A 0107892A 01089924 010F8924 0118992E 011F892E 01209924 0120992E
-01278924 0127892E 0128992A 012F892A 0130992E 0137892E 01389924 013F8924 0140992E 0147892E
-0148992A 014F892A 01509928 01578928 0160992A 0167892A 01689924 016F8924 01789924 017F8924
-01809924 01838924 01849924 01878924 01889924 018B8924 018C9924 018F8924 01909924 01938924
-01949924 01978924 01989924 019B8924 019C9924 019F8924 01A09924 01A38924 01A49924 01A78924
-01A89924 01AB8924 01B09933 01B38933 01B49933 01B78933 01B89933 01BB8933 01BC9933 01BF8933
-01C09933 01C38933 01C49933 01C78933 01C89933 01CB8933 01CC9933 01CF8933 01D09933 01D38933
-01D49933 01D78933 01DC9924 01DF8924 01E09924 01E38924 01E49924 01E78924 01E89924 01EB8924
-01EC9924 01EF8924 01F09924 01F38924 01F49924 01F78924 01F89924 01FB8924 01FC9924 01FF8924
-02049931 020F8931 02109924 02178924 0220992A 0227892A 02289924 022F8924 0238992E 023F892E
-02409928 02478928 0250992A 0257892A 02589924 025F8924 0268992E 026F892E 02709924 02778924
-0280992A 0287892A 02889924 028F8924 0298992E 029F892E 02A09928 02A78928 02B0992A 02B7892A
-02B89924 02BF8924 02C8992E 02CF892E 02D09924 02D78924 02E0992A 02E7892A 02E89924 02EF8924
-02F8992E 02FF892E 03009928 03078928 0310992A 0317892A 03189924 031F8924 0328992E 032F892E
-03309924 0330992E 03378924 0337892E 0338992A 033F892A 0340992E 0347892E 03489924 034F8924
-0350992E 0357892E 0358992A 035F892A 03609928 03678928 0370992A 0377892A 03789924 037F8924
-03889924 038F8924 03909924 03938924 03949924 03978924 03989924 039B8924 039C9924 039F8924
-03A09924 03A38924 03A49924 03A78924 03A89924 03AB8924 03AC9924 03AF8924 03B09924 03B38924
-03B49924 03B78924 03B89924 03BB8924 03C09933 03C38933 03C49933 03C78933 03C89933 03CB8933
-03CC9933 03CF8933 03D09933 03D38933 03D49933 03D78933 03D89933 03DB8933 03DC9933 03DF8933
-03E09933 03E38933 03E49933 03E78933 03F09931 03FB8931
-[midi event dump time: 191 ms]
-
-mem_free: 10976 10880 9728   diffs: 96 1152
-
-Playing on USB MIDI ch10-13...
-Done
-```
-
-1. The top section has debug print output from the parsing functions.
-
-2. The second section is a dump of the array of timestamped midi events
-   created by the note parsing code.
-
-3. The third section summarizes `mem_free()` measurements. (see `code.py`)
-
-4. The last section has debug prints from the MIDI event player.
 
 
 ## Reading the Code
@@ -215,6 +169,23 @@ The short summary:
   Example: `2 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
 
   For more examples, see [`track1.txt`](track1.txt)
+
+
+### Setting BPM and Time Unit
+
+The `B` command sets bpm, which is a global setting that gets applied during
+playback. For example, a line with `B 120` would set the playback speed to 120
+beats per minute.
+
+The `U` command sets the time unit, which relates to the duration numbers. For
+example, You can set the time unit to 1 eighth note with a `U 1/8` command. In
+that case, if you wrote `C2` in a staff, that note's duration would be 2 eighth
+notes (1 quarter note). Or, for quarter note triplets, you could use the `U
+1/4T` command. In that case, the duration of a `C2` would be 2/3 of one quarter
+note.
+
+The time unit options are: `1/4`, `1/8`, `1/16`, `1/32`, `1/4T`, `1/8T`,
+`1/16T`, and `1/32T`.
 
 
 ### Bass Clef Percussion Notes on Voice 1
@@ -318,29 +289,3 @@ out to around 112 to 184 miles per 1 ms, so the link latency is very low.
 The point is that, to make a MIDI gadget that would be suitable for use in live
 performances, aiming for MIDI link latency of 5 ms or less under normal
 conditions would probably be worth the trouble.
-
-
-## System Architecture Plan
-
-My plan for a system to get good timing resolution using limited resources...
-
-1. Provide notation that can represent up to 4 simultaneous voices, each with
-   its own MIDI channel.
-
-   For example, it should be possible to write that voice 1 has a kick drum on
-   measure 1, beat 1, and that voice 2 has the openning note of a bass line
-   starting on that same beat.
-
-2. Provide notation for polyphony within a voice (chords). For example, a chord
-   of 3 notes would get sent as a series of 3 note-on messages, then 3 note-off
-   messages after a delay, with all the messages using the same channel.
-
-3. Assign scheduling priority by voice number, with the lowest voice getting
-   highest priority. For example, to get the tightest drum timing, you can put
-   percussion on voice 1.
-
-4. Store MIDI events packed as integers in an `array.array('L')` to save memory
-   compared to regular lists of objects. This works for note on and off events
-   with a very straightforward encoding, as long as I always send the velocity
-   as a hardcoded constant. MIDI CC messages would be a hassle to pack into
-   uint32, so I won't worry about those for now.
