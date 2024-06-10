@@ -29,10 +29,12 @@ def Player(db, midi_out_callback, debug=False):
         from time import monotonic
         ms = lambda: int(monotonic() * 1000)
 
-    # Calculate microseconds per pulse at 24 pulses per beat
-    # 60 [s/m] * 1e3 [ms/s] / bpm [beat/m] / 24 [pulse/beat] = n [ms/pulse]
-    # 60e3 / bpm / 24 reduces to 2500 / bpm
-    mspp = 2500 / bpm    # ms per pulse at 24 pulse per beat
+    # Calculate milliseconds per pulse at 48 pulses per beat. Really we want 24
+    # pulses per beat, but since this is using integer math, starting at 48,
+    # then scaling down by 2 later ends up giving better timing in practice.
+    # 60 [s/m] * 1e3 [ms/s] / bpm [beat/m] / 48 [pulse/beat] = n [ms/pulse]
+    # 60e3 / bpm / 48 reduces to 5000 / bpm
+    mspp = 5000 // bpm   # ms per pulse at 48 pulse per beat
     mask = 0x3fffffff    # (2**29)-1, because ticks_ms rolls over at 2**29
     yield 0              # return generator before sending first event
     t0 = ms()            # first iteration: get epoch timestamp in ms
@@ -42,7 +44,7 @@ def Player(db, midi_out_callback, debug=False):
     # - (e >>  8) & 0xff:  MIDI status byte (note-on or note-off)
     # - (e      ) & 0xff:  MIDI note data byte (velocity is appended below)
     for e in buf:                   # loop over all scheduled MIDI events
-        tNext = mspp * (e >> 16)    # convert event time from pulses to ms
+        tNext = (mspp * (e >> 16)) >> 1  # get event time in ms @ 24 (!) ppb
         now = ((ms() - t0) & mask)
         while tNext > now:          # yield while not yet time for next event
             yield tNext - now       # return value is remaining ms
@@ -54,7 +56,7 @@ def Player(db, midi_out_callback, debug=False):
             # Print ms timestamp for this event (for checking latency)
             print(now)
     # If sequence ends on a rest, wait until the end of the rest
-    tNext = mspp * end
+    tNext = (mspp * end) >> 1  # this includes 48 ppb to 24 ppb scaling
     now = ((ms() - t0) & mask)
     while tNext > now:
         yield tNext - now
