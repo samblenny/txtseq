@@ -18,7 +18,7 @@ a microcontroller.
 ### For Adafruit Playground Guide Readers
 
 If you found your way here by way of the
-"[Tiny Plaintext MIDI Sequencer for SAMD21](https://adafruit-playground.com/u/SamBlenny/pages/tiny-plaintext-midi-sequencer-for-samd21)"
+[Tiny Plaintext MIDI Sequencer for SAMD21](https://adafruit-playground.com/u/SamBlenny/pages/tiny-plaintext-midi-sequencer-for-samd21)
 page on the Adafruit Playground site, that writeup refers to the sequencer code
 as of release v0.2.1. By the time you read this, the sequencer code here may
 have evolved a bit. If you want to see the state of this project at the time I
