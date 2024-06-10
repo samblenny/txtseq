@@ -42,13 +42,12 @@ I developed the sequencer on a Trinket M0 (non-Express SAMD21) to make sure it
 would be small and fast. While I haven't tested on other CircuitPython boards,
 probably the code will run fine, as long as you use a board that supports USB
 MIDI. If you want to use hardwired DIN-5 or TRS MIDI, take a look at the
-midi_tx() callback function defined in code.py.
+`midi_tx()` callback function defined in `code.py`.
 
 The current `code.py` configures `board.A0` (silkscreen `1~` on Trinket M0) as
 a digital input to control looping playback. If you don't connect anything to
 `A0`, the sequence will play through once when the code loads. If you connect
-`A0` to `GND`, the sequence plays in a loop. On my Trinket M0, I use this with
-a toggle switch between `GND` and `1~`.
+`A0` to `GND`, the sequence plays in a loop.
 
 
 ## How to Run the Code
