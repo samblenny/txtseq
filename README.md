@@ -65,15 +65,16 @@ most of the code (all but MIDI out) also runs on desktop python3.
    [web-midi-drumkit](https://samblenny.github.io/web-midi-drumkit/) (requires
    Chrome browser for WebMIDI support).
 
-2. Update CircuitPython and bootloader the normal way. (no additional libraries
-   are needed)
+2. Update CircuitPython and bootloader
+   [the normal way](https://learn.adafruit.com/welcome-to-circuitpython/installing-circuitpython).
+   (no additional libraries are needed)
 
 3. Copy [txtseq](txtseq) module to CIRCUITPY drive (okay to omit `__main__.py`)
 
-4. Copy [code.py](code.py), [boot.py](boot.py), and [track1.txt](track1.txt) to
+4. Copy [code.py](code.py), [boot.py](boot.py), and [track2.txt](track2.txt) to
    CIRCUITPY drive
 
-When `code.py` runs, it will parse music notation from `track1.txt` into an
+When `code.py` runs, it will parse music notation from `track2.txt` into an
 array of MIDI note event data, then start playing the notes over USB MIDI. The
 parser and playback code print a variety of debug info to the serial console to
 help with measuring memory and CPU use along with MIDI playback latency.
@@ -89,7 +90,7 @@ definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 
 2. `cd txtseq`
 
-3. `python3 -m txtseq track1.txt`
+3. `python3 -m txtseq track2.txt`
 
 
 ## Reading the Code
@@ -141,7 +142,7 @@ definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 ## Music Notation Grammar and Syntax
 
 For examples of how the plaintext music notation works, check out the comments
-in [`track1.txt`](track1.txt).
+in [`track2.txt`](track2.txt).
 
 The ASCII note transcription style used here is loosely based on the abc music
 standard, but the two notations are not compatible. In particular, this
@@ -185,7 +186,8 @@ The short summary:
 
   Example: `2 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
 
-  For more examples, see [`track1.txt`](track1.txt)
+  For more examples, see [`track1.txt`](track1.txt) and
+  [`track2.txt`](track2.txt)
 
 
 ### Setting BPM and Time Unit
