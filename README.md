@@ -141,8 +141,8 @@ definition of `midi_tx(data)` callback in `txtseq/__main__.py`)
 
 ## Music Notation Grammar and Syntax
 
-For examples of how the plaintext music notation works, check out the comments
-in [`track2.txt`](track2.txt).
+For examples of how the plaintext music notation works, check out
+[`track1.txt`](track1.txt) and [`track2.txt`](track2.txt).
 
 The ASCII note transcription style used here is loosely based on the abc music
 standard, but the two notations are not compatible. In particular, this
@@ -185,9 +185,6 @@ The short summary:
   as 2 tied whole notes in 4/4 time)
 
   Example: `2 | {CDG}4 {ACD}4 | C2 C2 D2 G2 |`
-
-  For more examples, see [`track1.txt`](track1.txt) and
-  [`track2.txt`](track2.txt)
 
 
 ### Setting BPM and Time Unit
